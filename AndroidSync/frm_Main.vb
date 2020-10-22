@@ -4,8 +4,8 @@ Public Class frm_Main
     Public ADBserver As AdbServer
     Public ADBclient As New AdbClient()
 
-    Public availableDevices As IEnumerable(Of DeviceData)
-    Public selectedDevice As DeviceData
+    Public availableDevices As New List(Of AndroidDevice)
+    Public selectedDevice As New AndroidDevice()
 
     Public bs_Devices As New BindingSource()
     Public bs_Playlists As New BindingSource()
@@ -63,6 +63,7 @@ Public Class frm_Main
         ADBclient.ExecuteRemoteCommand("rm /sdcard/direct.txt", device, receiver)
     End Sub
 
+#Region "general FUNCTIONs and SUBs"
     Private Sub prepareDirectories()
         If (Not My.Computer.FileSystem.DirectoryExists(My.Application.Info.DirectoryPath + "\presets\")) Then
             My.Computer.FileSystem.CreateDirectory(My.Application.Info.DirectoryPath + "\presets\")
@@ -151,30 +152,20 @@ Public Class frm_Main
     End Sub
 
     Private Sub refreshDevices()
-        availableDevices = ADBclient.GetDevices()
+        Dim devices As List(Of DeviceData)
+
+        devices = ADBclient.GetDevices()
+
+        For Each device In devices
+            availableDevices.Add(New AndroidDevice(device.Serial, device.State, device.Model, device.Product, device.Name, device.Features, device.Usb, device.TransportId))
+        Next
 
         bs_Devices.DataSource = availableDevices
         dgv_Devices.DataSource = bs_Devices
     End Sub
+#End Region
 
-    Private Sub refreshDiskspaceOfSelectedDevice()
-        Dim receiver As New ConsoleOutputReceiver()
-        Dim output As String
-        ADBclient.ExecuteRemoteCommand("df -k /data", selectedDevice, receiver)
-        output = receiver.ToString
-
-        Dim lines As String() = output.Split(vbLf)
-        lines(1) = System.Text.RegularExpressions.Regex.Replace(lines(1), "\s+", "|")
-        Dim fields As String() = lines(1).Split("|")
-
-        Dim devCapacity As Single = fields(1)
-        Dim devUsed As Single = fields(2)
-        Dim devFree As Single = fields(3)
-
-        MyProgressBar1.myText = String.Format("{0} GiB used of {1} GiB ({2} GiB / {3}% free)", Math.Round(devUsed / 1024 / 1024, 2), Math.Round(devCapacity / 1024 / 1024, 2), Math.Round(devFree / 1024 / 1024, 2), Math.Round(devFree * 100 / devCapacity, 2))
-        MyProgressBar1.myValue = Math.Round(devUsed * 100 / devCapacity, 0)
-    End Sub
-
+#Region "Load and Show form"
     Private Sub frm_Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         prepareDirectories()
         prepareForm()
@@ -189,7 +180,9 @@ Public Class frm_Main
         refreshDevices()
         Me.Cursor() = Cursors.Default
     End Sub
+#End Region
 
+#Region "frm_Main / grp_Devices"
     Private Sub btn_selectDevice_Click(sender As Object, e As EventArgs) Handles btn_selectDevice.Click
         ' save preset of currently selected device
         If (Not selectedDevice Is Nothing) Then
@@ -209,7 +202,10 @@ Public Class frm_Main
 
         ' refresh other control elements
         txt_ModelNameProductSerial.Text = selectedDevice.Model & " / " & selectedDevice.Name & " / " & selectedDevice.Product & " / " & selectedDevice.Serial
-        refreshDiskspaceOfSelectedDevice()
+
+        selectedDevice.refreshCapacity()
+        MyProgressBar1.myText = String.Format("{0} GiB used of {1} GiB ({2} GiB / {3}% free)", Math.Round(selectedDevice.CapacityUsed / 1024 / 1024, 2), Math.Round(selectedDevice.Capacity / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree * 100 / selectedDevice.Capacity, 2))
+        MyProgressBar1.myValue = Math.Round(selectedDevice.CapacityUsed * 100 / selectedDevice.Capacity, 0)
 
         tab_Control.Enabled = True
         str_Status_Device.Text = selectedDevice.Model
@@ -218,9 +214,31 @@ Public Class frm_Main
     Private Sub btn_refreshDevices_Click(sender As Object, e As EventArgs) Handles btn_refreshDevices.Click
         refreshDevices()
     End Sub
+#End Region
 
+#Region "frm_Main / tab_syncFiles"
+
+#Region "frm_Main / tab_syncFiles / grp_Settings"
     Private Sub txt_syncFiles_basePathRemote_TextChanged(sender As Object, e As EventArgs) Handles txt_syncFiles_basePathRemote.TextChanged
         preset.BasePath_Remote = txt_syncFiles_basePathRemote.Text
+    End Sub
+
+    Private Sub btn_syncFiles_basePath_Local_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_basePath_Local.Click
+        Dim fbd As New FolderBrowserDialog()
+
+        With fbd
+            .Description = "Select the base path for your local files"
+            .ShowNewFolderButton = False
+            If (preset.BasePath_Local <> "") Then
+                .SelectedPath = preset.BasePath_Local
+            Else
+                .SelectedPath = My.Computer.FileSystem.SpecialDirectories.MyMusic
+            End If
+        End With
+
+        If (fbd.ShowDialog() = DialogResult.OK) Then
+            txt_syncFiles_basePath_Local.Text = fbd.SelectedPath
+        End If
     End Sub
 
     Private Sub txt_syncFiles_basePath_Local_TextChanged(sender As Object, e As EventArgs) Handles txt_syncFiles_basePath_Local.TextChanged
@@ -234,7 +252,9 @@ Public Class frm_Main
     Private Sub txt_syncFiles_LAMEOptions_TextChanged(sender As Object, e As EventArgs) Handles txt_syncFiles_LAMEOptions.TextChanged
         preset.ConvertString = txt_syncFiles_LAMEOptions.Text
     End Sub
+#End Region
 
+#Region "frm_Main / tab_syncFiles / grp_Playlists"
     Private Sub btn_syncFiles_Playlists_Add_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_Playlists_Add.Click
         Dim ofd As New OpenFileDialog()
 
@@ -255,22 +275,7 @@ Public Class frm_Main
         Dim selectedPlaylist As Playlist = dgv_Playlists.SelectedRows(0).DataBoundItem
         bs_Playlists.Remove(selectedPlaylist)
     End Sub
+#End Region
 
-    Private Sub btn_syncFiles_basePath_Local_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_basePath_Local.Click
-        Dim fbd As New FolderBrowserDialog()
-
-        With fbd
-            .Description = "Select the base path for your local files"
-            .ShowNewFolderButton = False
-            If (preset.BasePath_Local <> "") Then
-                .SelectedPath = preset.BasePath_Local
-            Else
-                .SelectedPath = My.Computer.FileSystem.SpecialDirectories.MyMusic
-            End If
-        End With
-
-        If (fbd.ShowDialog() = DialogResult.OK) Then
-            txt_syncFiles_basePath_Local.Text = fbd.SelectedPath
-        End If
-    End Sub
+#End Region
 End Class
