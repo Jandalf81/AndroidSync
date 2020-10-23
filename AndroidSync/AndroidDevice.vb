@@ -77,4 +77,43 @@ Public Class AndroidDevice
         ADBclient.ExecuteRemoteCommand(command, Me, receiver)
         Return receiver.ToString()
     End Function
+
+    Public Sub upload(fromFile As String, toFile As String)
+        Dim syncService As New SyncService(Me)
+        Dim stream = System.IO.File.OpenRead(fromFile)
+
+        Try
+            syncService.Push(stream, toFile, 744, DateTime.Now, Nothing, Threading.CancellationToken.None)
+        Catch ex As Exception
+            MsgBox("Dateiname zu lang!" & vbCrLf & toFile, MsgBoxStyle.OkOnly)
+
+            ' upload file with short name
+            Dim fileinfo As New IO.FileInfo(fromFile)
+            Dim originalFilename As String = fileinfo.Name
+            Dim originalExtension As String = fileinfo.Extension
+
+            Dim toPath As String = My.Computer.FileSystem.GetParentPath(toFile)
+            toPath = toPath.Replace("\", "/")
+
+            upload(fromFile, toPath & "/FilenameTooLong.mp3")
+
+            ' create text file containing full (too long) file name
+            Dim file As System.IO.StreamWriter
+            file = My.Computer.FileSystem.OpenTextFileWriter(My.Application.Info.DirectoryPath & "\tmp\FilenameTooLong.txt", False, System.Text.Encoding.GetEncoding("iso-8859-1"))
+            file.Write(toFile)
+            file.Close()
+            upload(My.Application.Info.DirectoryPath & "\tmp\FilenameTooLong.txt", toPath & "/FilenameTooLong.txt")
+        End Try
+
+        stream.Close()
+        syncService.Dispose()
+    End Sub
+
+    Public Sub download(fromFile As String, toFile As String)
+        Dim syncService As New SyncService(Me)
+        Dim stream = System.IO.File.OpenWrite(toFile)
+
+        syncService.Pull(fromFile, stream, Nothing, Threading.CancellationToken.None)
+        stream.Close()
+    End Sub
 End Class

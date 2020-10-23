@@ -63,10 +63,51 @@ Public Class frm_Main
         ADBclient.ExecuteRemoteCommand("rm /sdcard/direct.txt", device, receiver)
     End Sub
 
+    Private Sub PoC_btn_uploadFile_Click(sender As Object, e As EventArgs) Handles PoC_btn_uploadFile.Click
+        Dim ofd As New OpenFileDialog()
+        Dim fromFile As String
+        Dim toFile As String
+
+
+        If (ofd.ShowDialog = DialogResult.OK) Then
+            fromFile = ofd.FileName
+
+            toFile = Replace(fromFile, preset.BasePath_Local, preset.BasePath_Remote)
+            toFile = Replace(toFile, "\", "/")
+
+            str_Status_Sync.Text = "Uploading " & fromFile & "..."
+            selectedDevice.upload(fromFile, toFile)
+            str_Status_Sync.Text = "waiting"
+        End If
+    End Sub
+
+    Private Sub TEST_maxFilenameLength_Click(sender As Object, e As EventArgs) Handles TEST_maxFilenameLength.Click
+        Dim currentLength_Filename As Integer = 1
+        Dim currentlength_Directory As Integer
+
+        Dim newFilename As String = "a.txt"
+
+        Do While True
+            Dim file As System.IO.StreamWriter
+            file = My.Computer.FileSystem.OpenTextFileWriter("E:\www.github.com\AndroidSync\AndroidSync\bin\Debug\tmp\a.txt", False, System.Text.Encoding.GetEncoding("iso-8859-1"))
+            file.Write(currentLength_Filename.ToString)
+            file.Close()
+
+            selectedDevice.upload("E:\www.github.com\AndroidSync\AndroidSync\bin\Debug\tmp\a.txt", "/sdcard/temp/" & newFilename)
+
+            newFilename = "a" & newFilename
+            currentLength_Filename += 1
+        Loop
+    End Sub
+
 #Region "general FUNCTIONs and SUBs"
     Private Sub prepareDirectories()
         If (Not My.Computer.FileSystem.DirectoryExists(My.Application.Info.DirectoryPath + "\presets\")) Then
             My.Computer.FileSystem.CreateDirectory(My.Application.Info.DirectoryPath + "\presets\")
+        End If
+
+        If (Not My.Computer.FileSystem.DirectoryExists(My.Application.Info.DirectoryPath + "\tmp\")) Then
+            My.Computer.FileSystem.CreateDirectory(My.Application.Info.DirectoryPath + "\tmp\")
         End If
     End Sub
 
@@ -185,7 +226,7 @@ Public Class frm_Main
 #Region "frm_Main / grp_Devices"
     Private Sub btn_selectDevice_Click(sender As Object, e As EventArgs) Handles btn_selectDevice.Click
         ' save preset of currently selected device
-        If (Not selectedDevice Is Nothing) Then
+        If (Not selectedDevice.Serial <> "") Then
             preset.Save(selectedDevice.Model + "_" + selectedDevice.Serial)
         End If
 

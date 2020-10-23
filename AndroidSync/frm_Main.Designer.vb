@@ -22,13 +22,13 @@ Partial Class frm_Main
     'Das Bearbeiten mit dem Code-Editor ist nicht möglich.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim Stack29 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
-        Dim Stack30 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
-        Dim Stack31 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
-        Dim Stack32 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
-        Dim DataGridViewCellStyle22 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle23 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle24 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim Stack5 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
+        Dim Stack6 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
+        Dim Stack7 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
+        Dim Stack8 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
         Me.str_Status = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.str_Status_ADBserver = New System.Windows.Forms.ToolStripStatusLabel()
@@ -40,12 +40,23 @@ Partial Class frm_Main
         Me.dgv_Devices = New System.Windows.Forms.DataGridView()
         Me.tab_Control = New System.Windows.Forms.TabControl()
         Me.tab_syncFiles_SettingsPlaylists = New System.Windows.Forms.TabPage()
+        Me.TEST_maxFilenameLength = New System.Windows.Forms.Button()
+        Me.PoC_btn_uploadFile = New System.Windows.Forms.Button()
         Me.tableSyncFiles_SettingsPlaylists = New System.Windows.Forms.TableLayoutPanel()
         Me.grp_syncFiles_Settings = New System.Windows.Forms.GroupBox()
+        Me.txt_syncFiles_LAMEOptions = New System.Windows.Forms.TextBox()
+        Me.lbl_syncFiles_LAMEOptions = New System.Windows.Forms.Label()
+        Me.chk_syncFiles_Convert = New System.Windows.Forms.CheckBox()
+        Me.btn_syncFiles_basePath_Local = New System.Windows.Forms.Button()
         Me.txt_syncFiles_basePathRemote = New System.Windows.Forms.TextBox()
         Me.txt_syncFiles_basePath_Local = New System.Windows.Forms.TextBox()
         Me.lbl_syncFiles_bastPath_Remote = New System.Windows.Forms.Label()
         Me.lbl_syncFiles_basePath_Local = New System.Windows.Forms.Label()
+        Me.grp_syncFiles_Playlists = New System.Windows.Forms.GroupBox()
+        Me.table_syncFiles_Playlists_Buttons = New System.Windows.Forms.TableLayoutPanel()
+        Me.btn_syncFiles_Playlists_Add = New System.Windows.Forms.Button()
+        Me.btn_syncFiles_Playlists_Remove = New System.Windows.Forms.Button()
+        Me.dgv_Playlists = New System.Windows.Forms.DataGridView()
         Me.tab_syncRatings = New System.Windows.Forms.TabPage()
         Me.grp_selectedDevice = New System.Windows.Forms.GroupBox()
         Me.chk_hasPreset = New System.Windows.Forms.CheckBox()
@@ -53,15 +64,8 @@ Partial Class frm_Main
         Me.lbl_ModelNameProductSerial = New System.Windows.Forms.Label()
         Me.MyProgressBar1 = New WindowsControlLibrary1.myProgressBar()
         Me.lbl_DiskSpace = New System.Windows.Forms.Label()
-        Me.btn_syncFiles_basePath_Local = New System.Windows.Forms.Button()
-        Me.chk_syncFiles_Convert = New System.Windows.Forms.CheckBox()
-        Me.lbl_syncFiles_LAMEOptions = New System.Windows.Forms.Label()
-        Me.txt_syncFiles_LAMEOptions = New System.Windows.Forms.TextBox()
-        Me.dgv_Playlists = New System.Windows.Forms.DataGridView()
-        Me.grp_syncFiles_Playlists = New System.Windows.Forms.GroupBox()
-        Me.table_syncFiles_Playlists_Buttons = New System.Windows.Forms.TableLayoutPanel()
-        Me.btn_syncFiles_Playlists_Add = New System.Windows.Forms.Button()
-        Me.btn_syncFiles_Playlists_Remove = New System.Windows.Forms.Button()
+        Me.ToolStripStatusLabel3 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.str_Status_Sync = New System.Windows.Forms.ToolStripStatusLabel()
         Me.str_Status.SuspendLayout()
         Me.grp_Devices.SuspendLayout()
         CType(Me.dgv_Devices, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -69,15 +73,15 @@ Partial Class frm_Main
         Me.tab_syncFiles_SettingsPlaylists.SuspendLayout()
         Me.tableSyncFiles_SettingsPlaylists.SuspendLayout()
         Me.grp_syncFiles_Settings.SuspendLayout()
-        Me.grp_selectedDevice.SuspendLayout()
-        CType(Me.dgv_Playlists, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grp_syncFiles_Playlists.SuspendLayout()
         Me.table_syncFiles_Playlists_Buttons.SuspendLayout()
+        CType(Me.dgv_Playlists, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.grp_selectedDevice.SuspendLayout()
         Me.SuspendLayout()
         '
         'str_Status
         '
-        Me.str_Status.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.str_Status_ADBserver, Me.ToolStripStatusLabel2, Me.str_Status_Device})
+        Me.str_Status.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.str_Status_ADBserver, Me.ToolStripStatusLabel2, Me.str_Status_Device, Me.ToolStripStatusLabel3, Me.str_Status_Sync})
         Me.str_Status.Location = New System.Drawing.Point(0, 734)
         Me.str_Status.Name = "str_Status"
         Me.str_Status.Size = New System.Drawing.Size(1162, 24)
@@ -173,6 +177,8 @@ Partial Class frm_Main
         'tab_syncFiles_SettingsPlaylists
         '
         Me.tab_syncFiles_SettingsPlaylists.BackColor = System.Drawing.SystemColors.Control
+        Me.tab_syncFiles_SettingsPlaylists.Controls.Add(Me.TEST_maxFilenameLength)
+        Me.tab_syncFiles_SettingsPlaylists.Controls.Add(Me.PoC_btn_uploadFile)
         Me.tab_syncFiles_SettingsPlaylists.Controls.Add(Me.tableSyncFiles_SettingsPlaylists)
         Me.tab_syncFiles_SettingsPlaylists.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tab_syncFiles_SettingsPlaylists.Location = New System.Drawing.Point(4, 22)
@@ -181,6 +187,24 @@ Partial Class frm_Main
         Me.tab_syncFiles_SettingsPlaylists.Size = New System.Drawing.Size(1132, 375)
         Me.tab_syncFiles_SettingsPlaylists.TabIndex = 0
         Me.tab_syncFiles_SettingsPlaylists.Text = "sync Files"
+        '
+        'TEST_maxFilenameLength
+        '
+        Me.TEST_maxFilenameLength.Location = New System.Drawing.Point(318, 253)
+        Me.TEST_maxFilenameLength.Name = "TEST_maxFilenameLength"
+        Me.TEST_maxFilenameLength.Size = New System.Drawing.Size(176, 72)
+        Me.TEST_maxFilenameLength.TabIndex = 2
+        Me.TEST_maxFilenameLength.Text = "TEST_maxFilenameLength"
+        Me.TEST_maxFilenameLength.UseVisualStyleBackColor = True
+        '
+        'PoC_btn_uploadFile
+        '
+        Me.PoC_btn_uploadFile.Location = New System.Drawing.Point(106, 255)
+        Me.PoC_btn_uploadFile.Name = "PoC_btn_uploadFile"
+        Me.PoC_btn_uploadFile.Size = New System.Drawing.Size(177, 70)
+        Me.PoC_btn_uploadFile.TabIndex = 1
+        Me.PoC_btn_uploadFile.Text = "PoC_uploadFile"
+        Me.PoC_btn_uploadFile.UseVisualStyleBackColor = True
         '
         'tableSyncFiles_SettingsPlaylists
         '
@@ -216,6 +240,44 @@ Partial Class frm_Main
         Me.grp_syncFiles_Settings.TabIndex = 0
         Me.grp_syncFiles_Settings.TabStop = False
         Me.grp_syncFiles_Settings.Text = "Settings"
+        '
+        'txt_syncFiles_LAMEOptions
+        '
+        Me.txt_syncFiles_LAMEOptions.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txt_syncFiles_LAMEOptions.Location = New System.Drawing.Point(110, 91)
+        Me.txt_syncFiles_LAMEOptions.Name = "txt_syncFiles_LAMEOptions"
+        Me.txt_syncFiles_LAMEOptions.Size = New System.Drawing.Size(438, 20)
+        Me.txt_syncFiles_LAMEOptions.TabIndex = 7
+        '
+        'lbl_syncFiles_LAMEOptions
+        '
+        Me.lbl_syncFiles_LAMEOptions.AutoSize = True
+        Me.lbl_syncFiles_LAMEOptions.Location = New System.Drawing.Point(6, 94)
+        Me.lbl_syncFiles_LAMEOptions.Name = "lbl_syncFiles_LAMEOptions"
+        Me.lbl_syncFiles_LAMEOptions.Size = New System.Drawing.Size(76, 13)
+        Me.lbl_syncFiles_LAMEOptions.TabIndex = 6
+        Me.lbl_syncFiles_LAMEOptions.Text = "LAME options:"
+        '
+        'chk_syncFiles_Convert
+        '
+        Me.chk_syncFiles_Convert.AutoSize = True
+        Me.chk_syncFiles_Convert.Location = New System.Drawing.Point(110, 68)
+        Me.chk_syncFiles_Convert.Name = "chk_syncFiles_Convert"
+        Me.chk_syncFiles_Convert.Size = New System.Drawing.Size(138, 17)
+        Me.chk_syncFiles_Convert.TabIndex = 5
+        Me.chk_syncFiles_Convert.Text = "Convert files with LAME"
+        Me.chk_syncFiles_Convert.UseVisualStyleBackColor = True
+        '
+        'btn_syncFiles_basePath_Local
+        '
+        Me.btn_syncFiles_basePath_Local.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btn_syncFiles_basePath_Local.Location = New System.Drawing.Point(491, 14)
+        Me.btn_syncFiles_basePath_Local.Name = "btn_syncFiles_basePath_Local"
+        Me.btn_syncFiles_basePath_Local.Size = New System.Drawing.Size(57, 23)
+        Me.btn_syncFiles_basePath_Local.TabIndex = 4
+        Me.btn_syncFiles_basePath_Local.Text = "Set"
+        Me.btn_syncFiles_basePath_Local.UseVisualStyleBackColor = True
         '
         'txt_syncFiles_basePathRemote
         '
@@ -253,6 +315,92 @@ Partial Class frm_Main
         Me.lbl_syncFiles_basePath_Local.Size = New System.Drawing.Size(87, 13)
         Me.lbl_syncFiles_basePath_Local.TabIndex = 0
         Me.lbl_syncFiles_basePath_Local.Text = "base Path Local:"
+        '
+        'grp_syncFiles_Playlists
+        '
+        Me.grp_syncFiles_Playlists.Controls.Add(Me.table_syncFiles_Playlists_Buttons)
+        Me.grp_syncFiles_Playlists.Controls.Add(Me.dgv_Playlists)
+        Me.grp_syncFiles_Playlists.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grp_syncFiles_Playlists.Location = New System.Drawing.Point(569, 6)
+        Me.grp_syncFiles_Playlists.Margin = New System.Windows.Forms.Padding(6, 6, 3, 3)
+        Me.grp_syncFiles_Playlists.Name = "grp_syncFiles_Playlists"
+        Me.grp_syncFiles_Playlists.Size = New System.Drawing.Size(554, 199)
+        Me.grp_syncFiles_Playlists.TabIndex = 1
+        Me.grp_syncFiles_Playlists.TabStop = False
+        Me.grp_syncFiles_Playlists.Text = "Playlists"
+        '
+        'table_syncFiles_Playlists_Buttons
+        '
+        Me.table_syncFiles_Playlists_Buttons.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.table_syncFiles_Playlists_Buttons.ColumnCount = 2
+        Me.table_syncFiles_Playlists_Buttons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.table_syncFiles_Playlists_Buttons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.table_syncFiles_Playlists_Buttons.Controls.Add(Me.btn_syncFiles_Playlists_Add, 0, 0)
+        Me.table_syncFiles_Playlists_Buttons.Controls.Add(Me.btn_syncFiles_Playlists_Remove, 1, 0)
+        Me.table_syncFiles_Playlists_Buttons.Location = New System.Drawing.Point(6, 137)
+        Me.table_syncFiles_Playlists_Buttons.Margin = New System.Windows.Forms.Padding(3, 0, 3, 0)
+        Me.table_syncFiles_Playlists_Buttons.Name = "table_syncFiles_Playlists_Buttons"
+        Me.table_syncFiles_Playlists_Buttons.RowCount = 1
+        Me.table_syncFiles_Playlists_Buttons.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.table_syncFiles_Playlists_Buttons.Size = New System.Drawing.Size(542, 59)
+        Me.table_syncFiles_Playlists_Buttons.TabIndex = 1
+        '
+        'btn_syncFiles_Playlists_Add
+        '
+        Me.btn_syncFiles_Playlists_Add.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.btn_syncFiles_Playlists_Add.Location = New System.Drawing.Point(0, 0)
+        Me.btn_syncFiles_Playlists_Add.Margin = New System.Windows.Forms.Padding(0, 0, 3, 0)
+        Me.btn_syncFiles_Playlists_Add.Name = "btn_syncFiles_Playlists_Add"
+        Me.btn_syncFiles_Playlists_Add.Size = New System.Drawing.Size(268, 59)
+        Me.btn_syncFiles_Playlists_Add.TabIndex = 0
+        Me.btn_syncFiles_Playlists_Add.Text = "add Playlist"
+        Me.btn_syncFiles_Playlists_Add.UseVisualStyleBackColor = True
+        '
+        'btn_syncFiles_Playlists_Remove
+        '
+        Me.btn_syncFiles_Playlists_Remove.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.btn_syncFiles_Playlists_Remove.Location = New System.Drawing.Point(274, 0)
+        Me.btn_syncFiles_Playlists_Remove.Margin = New System.Windows.Forms.Padding(3, 0, 0, 0)
+        Me.btn_syncFiles_Playlists_Remove.Name = "btn_syncFiles_Playlists_Remove"
+        Me.btn_syncFiles_Playlists_Remove.Size = New System.Drawing.Size(268, 59)
+        Me.btn_syncFiles_Playlists_Remove.TabIndex = 1
+        Me.btn_syncFiles_Playlists_Remove.Text = "remove Playlist"
+        Me.btn_syncFiles_Playlists_Remove.UseVisualStyleBackColor = True
+        '
+        'dgv_Playlists
+        '
+        Me.dgv_Playlists.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgv_Playlists.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle4
+        Me.dgv_Playlists.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgv_Playlists.DefaultCellStyle = DataGridViewCellStyle5
+        Me.dgv_Playlists.Location = New System.Drawing.Point(6, 19)
+        Me.dgv_Playlists.Name = "dgv_Playlists"
+        DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle6.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgv_Playlists.RowHeadersDefaultCellStyle = DataGridViewCellStyle6
+        Me.dgv_Playlists.Size = New System.Drawing.Size(542, 115)
+        Me.dgv_Playlists.TabIndex = 0
         '
         'tab_syncRatings
         '
@@ -320,18 +468,18 @@ Partial Class frm_Main
         Me.MyProgressBar1.MinimumSize = New System.Drawing.Size(100, 20)
         Me.MyProgressBar1.Name = "MyProgressBar1"
         Me.MyProgressBar1.Size = New System.Drawing.Size(996, 20)
-        Stack29.Color = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Stack29.MaxValue = 80
-        Stack30.Color = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(128, Byte), Integer))
-        Stack30.MaxValue = 90
-        Stack31.Color = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Stack31.MaxValue = 95
-        Stack32.Color = System.Drawing.Color.Red
-        Stack32.MaxValue = 100
-        Me.MyProgressBar1.stacks.Add(Stack29)
-        Me.MyProgressBar1.stacks.Add(Stack30)
-        Me.MyProgressBar1.stacks.Add(Stack31)
-        Me.MyProgressBar1.stacks.Add(Stack32)
+        Stack5.Color = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Stack5.MaxValue = 80
+        Stack6.Color = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(128, Byte), Integer))
+        Stack6.MaxValue = 90
+        Stack7.Color = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Stack7.MaxValue = 95
+        Stack8.Color = System.Drawing.Color.Red
+        Stack8.MaxValue = 100
+        Me.MyProgressBar1.stacks.Add(Stack5)
+        Me.MyProgressBar1.stacks.Add(Stack6)
+        Me.MyProgressBar1.stacks.Add(Stack7)
+        Me.MyProgressBar1.stacks.Add(Stack8)
         Me.MyProgressBar1.TabIndex = 5
         '
         'lbl_DiskSpace
@@ -343,129 +491,18 @@ Partial Class frm_Main
         Me.lbl_DiskSpace.TabIndex = 4
         Me.lbl_DiskSpace.Text = "Disk Space:"
         '
-        'btn_syncFiles_basePath_Local
+        'ToolStripStatusLabel3
         '
-        Me.btn_syncFiles_basePath_Local.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btn_syncFiles_basePath_Local.Location = New System.Drawing.Point(491, 14)
-        Me.btn_syncFiles_basePath_Local.Name = "btn_syncFiles_basePath_Local"
-        Me.btn_syncFiles_basePath_Local.Size = New System.Drawing.Size(57, 23)
-        Me.btn_syncFiles_basePath_Local.TabIndex = 4
-        Me.btn_syncFiles_basePath_Local.Text = "Set"
-        Me.btn_syncFiles_basePath_Local.UseVisualStyleBackColor = True
+        Me.ToolStripStatusLabel3.Name = "ToolStripStatusLabel3"
+        Me.ToolStripStatusLabel3.Size = New System.Drawing.Size(35, 19)
+        Me.ToolStripStatusLabel3.Text = "Sync:"
         '
-        'chk_syncFiles_Convert
+        'str_Status_Sync
         '
-        Me.chk_syncFiles_Convert.AutoSize = True
-        Me.chk_syncFiles_Convert.Location = New System.Drawing.Point(110, 68)
-        Me.chk_syncFiles_Convert.Name = "chk_syncFiles_Convert"
-        Me.chk_syncFiles_Convert.Size = New System.Drawing.Size(138, 17)
-        Me.chk_syncFiles_Convert.TabIndex = 5
-        Me.chk_syncFiles_Convert.Text = "Convert files with LAME"
-        Me.chk_syncFiles_Convert.UseVisualStyleBackColor = True
-        '
-        'lbl_syncFiles_LAMEOptions
-        '
-        Me.lbl_syncFiles_LAMEOptions.AutoSize = True
-        Me.lbl_syncFiles_LAMEOptions.Location = New System.Drawing.Point(6, 94)
-        Me.lbl_syncFiles_LAMEOptions.Name = "lbl_syncFiles_LAMEOptions"
-        Me.lbl_syncFiles_LAMEOptions.Size = New System.Drawing.Size(76, 13)
-        Me.lbl_syncFiles_LAMEOptions.TabIndex = 6
-        Me.lbl_syncFiles_LAMEOptions.Text = "LAME options:"
-        '
-        'txt_syncFiles_LAMEOptions
-        '
-        Me.txt_syncFiles_LAMEOptions.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txt_syncFiles_LAMEOptions.Location = New System.Drawing.Point(110, 91)
-        Me.txt_syncFiles_LAMEOptions.Name = "txt_syncFiles_LAMEOptions"
-        Me.txt_syncFiles_LAMEOptions.Size = New System.Drawing.Size(438, 20)
-        Me.txt_syncFiles_LAMEOptions.TabIndex = 7
-        '
-        'dgv_Playlists
-        '
-        Me.dgv_Playlists.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        DataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle22.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle22.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle22.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle22.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle22.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle22.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgv_Playlists.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle22
-        Me.dgv_Playlists.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle23.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle23.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle23.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle23.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle23.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle23.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgv_Playlists.DefaultCellStyle = DataGridViewCellStyle23
-        Me.dgv_Playlists.Location = New System.Drawing.Point(6, 19)
-        Me.dgv_Playlists.Name = "dgv_Playlists"
-        DataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle24.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle24.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle24.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle24.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle24.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle24.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgv_Playlists.RowHeadersDefaultCellStyle = DataGridViewCellStyle24
-        Me.dgv_Playlists.Size = New System.Drawing.Size(542, 115)
-        Me.dgv_Playlists.TabIndex = 0
-        '
-        'grp_syncFiles_Playlists
-        '
-        Me.grp_syncFiles_Playlists.Controls.Add(Me.table_syncFiles_Playlists_Buttons)
-        Me.grp_syncFiles_Playlists.Controls.Add(Me.dgv_Playlists)
-        Me.grp_syncFiles_Playlists.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grp_syncFiles_Playlists.Location = New System.Drawing.Point(569, 6)
-        Me.grp_syncFiles_Playlists.Margin = New System.Windows.Forms.Padding(6, 6, 3, 3)
-        Me.grp_syncFiles_Playlists.Name = "grp_syncFiles_Playlists"
-        Me.grp_syncFiles_Playlists.Size = New System.Drawing.Size(554, 199)
-        Me.grp_syncFiles_Playlists.TabIndex = 1
-        Me.grp_syncFiles_Playlists.TabStop = False
-        Me.grp_syncFiles_Playlists.Text = "Playlists"
-        '
-        'table_syncFiles_Playlists_Buttons
-        '
-        Me.table_syncFiles_Playlists_Buttons.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.table_syncFiles_Playlists_Buttons.ColumnCount = 2
-        Me.table_syncFiles_Playlists_Buttons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.table_syncFiles_Playlists_Buttons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.table_syncFiles_Playlists_Buttons.Controls.Add(Me.btn_syncFiles_Playlists_Add, 0, 0)
-        Me.table_syncFiles_Playlists_Buttons.Controls.Add(Me.btn_syncFiles_Playlists_Remove, 1, 0)
-        Me.table_syncFiles_Playlists_Buttons.Location = New System.Drawing.Point(6, 137)
-        Me.table_syncFiles_Playlists_Buttons.Margin = New System.Windows.Forms.Padding(3, 0, 3, 0)
-        Me.table_syncFiles_Playlists_Buttons.Name = "table_syncFiles_Playlists_Buttons"
-        Me.table_syncFiles_Playlists_Buttons.RowCount = 1
-        Me.table_syncFiles_Playlists_Buttons.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.table_syncFiles_Playlists_Buttons.Size = New System.Drawing.Size(542, 59)
-        Me.table_syncFiles_Playlists_Buttons.TabIndex = 1
-        '
-        'btn_syncFiles_Playlists_Add
-        '
-        Me.btn_syncFiles_Playlists_Add.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.btn_syncFiles_Playlists_Add.Location = New System.Drawing.Point(0, 0)
-        Me.btn_syncFiles_Playlists_Add.Margin = New System.Windows.Forms.Padding(0, 0, 3, 0)
-        Me.btn_syncFiles_Playlists_Add.Name = "btn_syncFiles_Playlists_Add"
-        Me.btn_syncFiles_Playlists_Add.Size = New System.Drawing.Size(268, 59)
-        Me.btn_syncFiles_Playlists_Add.TabIndex = 0
-        Me.btn_syncFiles_Playlists_Add.Text = "add Playlist"
-        Me.btn_syncFiles_Playlists_Add.UseVisualStyleBackColor = True
-        '
-        'btn_syncFiles_Playlists_Remove
-        '
-        Me.btn_syncFiles_Playlists_Remove.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.btn_syncFiles_Playlists_Remove.Location = New System.Drawing.Point(274, 0)
-        Me.btn_syncFiles_Playlists_Remove.Margin = New System.Windows.Forms.Padding(3, 0, 0, 0)
-        Me.btn_syncFiles_Playlists_Remove.Name = "btn_syncFiles_Playlists_Remove"
-        Me.btn_syncFiles_Playlists_Remove.Size = New System.Drawing.Size(268, 59)
-        Me.btn_syncFiles_Playlists_Remove.TabIndex = 1
-        Me.btn_syncFiles_Playlists_Remove.Text = "remove Playlist"
-        Me.btn_syncFiles_Playlists_Remove.UseVisualStyleBackColor = True
+        Me.str_Status_Sync.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right
+        Me.str_Status_Sync.Name = "str_Status_Sync"
+        Me.str_Status_Sync.Size = New System.Drawing.Size(101, 19)
+        Me.str_Status_Sync.Text = "str_Status_Device"
         '
         'frm_Main
         '
@@ -487,11 +524,11 @@ Partial Class frm_Main
         Me.tableSyncFiles_SettingsPlaylists.ResumeLayout(False)
         Me.grp_syncFiles_Settings.ResumeLayout(False)
         Me.grp_syncFiles_Settings.PerformLayout()
-        Me.grp_selectedDevice.ResumeLayout(False)
-        Me.grp_selectedDevice.PerformLayout()
-        CType(Me.dgv_Playlists, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grp_syncFiles_Playlists.ResumeLayout(False)
         Me.table_syncFiles_Playlists_Buttons.ResumeLayout(False)
+        CType(Me.dgv_Playlists, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grp_selectedDevice.ResumeLayout(False)
+        Me.grp_selectedDevice.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -529,4 +566,8 @@ Partial Class frm_Main
     Friend WithEvents table_syncFiles_Playlists_Buttons As TableLayoutPanel
     Friend WithEvents btn_syncFiles_Playlists_Add As Button
     Friend WithEvents btn_syncFiles_Playlists_Remove As Button
+    Friend WithEvents PoC_btn_uploadFile As Button
+    Friend WithEvents TEST_maxFilenameLength As Button
+    Friend WithEvents ToolStripStatusLabel3 As ToolStripStatusLabel
+    Friend WithEvents str_Status_Sync As ToolStripStatusLabel
 End Class
