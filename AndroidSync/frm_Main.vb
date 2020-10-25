@@ -9,8 +9,11 @@ Public Class frm_Main
 
     Public bs_Devices As New BindingSource()
     Public bs_Playlists As New BindingSource()
+    Public bs_syncFiles_Log As New BindingSource()
 
     Public preset As New Preset()
+
+    Public log As Log
 
     Private Sub PoC_btn_getListOfMP3_Click(sender As Object, e As EventArgs)
         str_Status_ADBserver.Text = "Starte ADB-Server..."
@@ -68,6 +71,11 @@ Public Class frm_Main
         Dim fromFile As String
         Dim toFile As String
 
+        log = New Log(My.Application.Info.DirectoryPath & "\logs\" & selectedDevice.Model & "_" & selectedDevice.Serial)
+        bs_syncFiles_Log.DataSource = log.LogEntries
+
+
+        bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.Message, "Sync started"))
 
         If (ofd.ShowDialog = DialogResult.OK) Then
             fromFile = ofd.FileName
@@ -77,11 +85,17 @@ Public Class frm_Main
 
             str_Status_Sync.Text = "Uploading " & fromFile & "..."
             selectedDevice.upload(fromFile, toFile)
+
+            bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.SyncFiles, "File uploaded", fromFile, toFile))
+
             str_Status_Sync.Text = "waiting"
         End If
+
+        bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.Message, "Sync finished"))
+        log.Close()
     End Sub
 
-    Private Sub TEST_maxFilenameLength_Click(sender As Object, e As EventArgs) Handles TEST_maxFilenameLength.Click
+    Private Sub TEST_maxFilenameLength_Click(sender As Object, e As EventArgs)
         Dim currentLength_Filename As Integer = 1
         Dim currentlength_Directory As Integer
 
@@ -108,6 +122,10 @@ Public Class frm_Main
 
         If (Not My.Computer.FileSystem.DirectoryExists(My.Application.Info.DirectoryPath + "\tmp\")) Then
             My.Computer.FileSystem.CreateDirectory(My.Application.Info.DirectoryPath + "\tmp\")
+        End If
+
+        If (Not My.Computer.FileSystem.DirectoryExists(My.Application.Info.DirectoryPath + "\logs\")) Then
+            My.Computer.FileSystem.CreateDirectory(My.Application.Info.DirectoryPath + "\logs\")
         End If
     End Sub
 
@@ -168,6 +186,46 @@ Public Class frm_Main
         End With
 
         bs_Playlists.DataSource = preset.Playlists
+
+        ' dgv_syncFiles_Log
+        Dim col_syncFiles_Log_Timestamp As New DataGridViewTextBoxColumn()
+        col_syncFiles_Log_Timestamp.DataPropertyName = "Timestamp"
+        col_syncFiles_Log_Timestamp.Name = "Timestamp"
+
+        Dim col_syncFiles_Log_Type As New DataGridViewTextBoxColumn()
+        col_syncFiles_Log_Type.DataPropertyName = "Type"
+        col_syncFiles_Log_Type.Name = "Type"
+
+        Dim col_syncFiles_Log_Message As New DataGridViewTextBoxColumn()
+        col_syncFiles_Log_Message.DataPropertyName = "Message"
+        col_syncFiles_Log_Message.Name = "Message"
+
+        Dim col_syncFiles_Log_fromFile As New DataGridViewTextBoxColumn()
+        col_syncFiles_Log_fromFile.DataPropertyName = "fromFile"
+        col_syncFiles_Log_fromFile.Name = "from File"
+
+        Dim col_syncFiles_Log_toFile As New DataGridViewTextBoxColumn()
+        col_syncFiles_Log_toFile.DataPropertyName = "toFile"
+        col_syncFiles_Log_toFile.Name = "to File"
+
+        With dgv_sycFiles_Log
+            .AllowUserToAddRows = False
+            .AllowUserToDeleteRows = False
+            .AllowUserToOrderColumns = True
+            .AllowUserToResizeColumns = True
+            .AutoGenerateColumns = False
+            .ReadOnly = True
+            .RowHeadersVisible = False
+            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+
+            .Columns.Add(col_syncFiles_Log_Timestamp)
+            .Columns.Add(col_syncFiles_Log_Type)
+            .Columns.Add(col_syncFiles_Log_Message)
+            .Columns.Add(col_syncFiles_Log_fromFile)
+            .Columns.Add(col_syncFiles_Log_toFile)
+
+            .DataSource = bs_syncFiles_Log
+        End With
 
         ' Status Strip
         str_Status_ADBserver.Text = "waiting..."
@@ -317,6 +375,10 @@ Public Class frm_Main
         bs_Playlists.Remove(selectedPlaylist)
     End Sub
 #End Region
+
+#End Region
+
+#Region "Background Workers"
 
 #End Region
 End Class
