@@ -15,6 +15,11 @@ Public Class frm_Main
 
     Public log As Log
 
+    Public WithEvents bgw_syncSingleTrack As New System.ComponentModel.BackgroundWorker() With {
+        .WorkerReportsProgress = True,
+        .WorkerSupportsCancellation = True
+        }
+
     Private Sub PoC_btn_getListOfMP3_Click(sender As Object, e As EventArgs)
         str_Status_ADBserver.Text = "Starte ADB-Server..."
         Dim ADBserver As SharpAdbClient.AdbServer = New SharpAdbClient.AdbServer()
@@ -68,31 +73,17 @@ Public Class frm_Main
 
     Private Sub PoC_btn_uploadFile_Click(sender As Object, e As EventArgs) Handles PoC_btn_uploadFile.Click
         Dim ofd As New OpenFileDialog()
-        Dim fromFile As String
-        Dim toFile As String
+        ofd.Multiselect = True
+        Dim fromFiles() As String
 
         log = New Log(My.Application.Info.DirectoryPath & "\logs\" & selectedDevice.Model & "_" & selectedDevice.Serial)
         bs_syncFiles_Log.DataSource = log.LogEntries
 
-
-        bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.Message, "Sync started"))
-
         If (ofd.ShowDialog = DialogResult.OK) Then
-            fromFile = ofd.FileName
+            fromFiles = ofd.FileNames
 
-            toFile = Replace(fromFile, preset.BasePath_Local, preset.BasePath_Remote)
-            toFile = Replace(toFile, "\", "/")
-
-            str_Status_Sync.Text = "Uploading " & fromFile & "..."
-            selectedDevice.upload(fromFile, toFile)
-
-            bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.SyncFiles, "File uploaded", fromFile, toFile))
-
-            str_Status_Sync.Text = "waiting"
+            bgw_syncSingleTrack.RunWorkerAsync(fromFiles)
         End If
-
-        bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.Message, "Sync finished"))
-        log.Close()
     End Sub
 
     Private Sub TEST_maxFilenameLength_Click(sender As Object, e As EventArgs)
@@ -379,6 +370,45 @@ Public Class frm_Main
 #End Region
 
 #Region "Background Workers"
+    Private Sub bgw_syncSingleTrack_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles bgw_syncSingleTrack.DoWork
+        Dim currentProgress As Integer = 0
+        Dim progressPercentage As Integer = 0
+        Dim fromFiles() As String = e.Argument
+        Dim count As Integer = fromFiles.Count
 
+        bgw_syncSingleTrack.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.Message, "Sync started"))
+
+        For Each fromFile As String In fromFiles
+            currentProgress += 1
+
+            bgw_syncSingleTrack.ReportProgress(progressPercentage, "Uploading " & fromFile & "...")
+
+            Dim toFile As String = fromFile.Replace(preset.BasePath_Local, preset.BasePath_Remote)
+            toFile = toFile.Replace("\", "/")
+
+            selectedDevice.upload(fromFile, toFile)
+
+            progressPercentage = currentProgress * 100 / count
+            bgw_syncSingleTrack.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.SyncFiles, "File uploaded", fromFile, toFile))
+        Next
+    End Sub
+
+    Private Sub bgw_syncSingleTrack_ProgressChanged(sender As Object, e As System.ComponentModel.ProgressChangedEventArgs) Handles bgw_syncSingleTrack.ProgressChanged
+        str_Status_Progress.Text = e.ProgressPercentage & "%"
+
+        Select Case e.UserState.GetType()
+            Case GetType(LogEntry)
+                bs_syncFiles_Log.Add(e.UserState)
+            Case GetType(String)
+                str_Status_Sync.Text = e.UserState
+        End Select
+    End Sub
+
+    Private Sub bgw_syncSingleTrack_Completed() Handles bgw_syncSingleTrack.RunWorkerCompleted
+        str_Status_Sync.Text = "Done"
+
+        bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.Message, "Sync finished"))
+        log.Close()
+    End Sub
 #End Region
 End Class
