@@ -1,4 +1,5 @@
-﻿Imports SharpAdbClient
+﻿Imports System.ComponentModel
+Imports SharpAdbClient
 
 Public Class frm_Main
     Public ADBserver As AdbServer
@@ -19,6 +20,11 @@ Public Class frm_Main
         .WorkerReportsProgress = True,
         .WorkerSupportsCancellation = True
         }
+
+    Public WithEvents bgw_readPreset As New System.ComponentModel.BackgroundWorker() With {
+        .WorkerReportsProgress = True,
+        .WorkerSupportsCancellation = False
+    }
 
     Private Sub PoC_btn_getListOfMP3_Click(sender As Object, e As EventArgs)
         str_Status_ADBserver.Text = "Starte ADB-Server..."
@@ -159,9 +165,13 @@ Public Class frm_Main
         End With
 
         ' dgv_Playlists
-        Dim col_Playlist As New DataGridViewTextBoxColumn()
-        col_Playlist.DataPropertyName = "Filename"
-        col_Playlist.Name = "File name"
+        Dim col_Playlist_Filename As New DataGridViewTextBoxColumn()
+        col_Playlist_Filename.DataPropertyName = "Filename"
+        col_Playlist_Filename.Name = "File name"
+
+        Dim col_Playlists_NumberOfTracks As New DataGridViewTextBoxColumn()
+        col_Playlists_NumberOfTracks.DataPropertyName = "NumberOfTracks"
+        col_Playlists_NumberOfTracks.Name = "Tracks"
 
         With dgv_Playlists
             .ReadOnly = True
@@ -171,7 +181,8 @@ Public Class frm_Main
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
             .RowHeadersVisible = False
 
-            .Columns.Add(col_Playlist)
+            .Columns.Add(col_Playlist_Filename)
+            .Columns.Add(col_Playlists_NumberOfTracks)
 
             .DataSource = bs_Playlists
         End With
@@ -199,7 +210,7 @@ Public Class frm_Main
         col_syncFiles_Log_toFile.DataPropertyName = "toFile"
         col_syncFiles_Log_toFile.Name = "to File"
 
-        With dgv_sycFiles_Log
+        With dgv_syncFiles_Log
             .AllowUserToAddRows = False
             .AllowUserToDeleteRows = False
             .AllowUserToOrderColumns = True
@@ -270,12 +281,18 @@ Public Class frm_Main
         refreshDevices()
         Me.Cursor() = Cursors.Default
     End Sub
+
+    Private Sub frm_Main_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+        If (selectedDevice IsNot Nothing And selectedDevice.Serial <> "") Then
+            preset.Save(selectedDevice.Model + "_" + selectedDevice.Serial)
+        End If
+    End Sub
 #End Region
 
 #Region "frm_Main / grp_Devices"
     Private Sub btn_selectDevice_Click(sender As Object, e As EventArgs) Handles btn_selectDevice.Click
         ' save preset of currently selected device
-        If (Not selectedDevice.Serial <> "") Then
+        If (selectedDevice IsNot Nothing And selectedDevice.Serial <> "") Then
             preset.Save(selectedDevice.Model + "_" + selectedDevice.Serial)
         End If
 
@@ -297,8 +314,9 @@ Public Class frm_Main
         MyProgressBar1.myText = String.Format("{0} GiB used of {1} GiB ({2} GiB / {3}% free)", Math.Round(selectedDevice.CapacityUsed / 1024 / 1024, 2), Math.Round(selectedDevice.Capacity / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree * 100 / selectedDevice.Capacity, 2))
         MyProgressBar1.myValue = Math.Round(selectedDevice.CapacityUsed * 100 / selectedDevice.Capacity, 0)
 
-        tab_Control.Enabled = True
         str_Status_Device.Text = selectedDevice.Model
+
+        bgw_readPreset.RunWorkerAsync(preset.Playlists)
     End Sub
 
     Private Sub btn_refreshDevices_Click(sender As Object, e As EventArgs) Handles btn_refreshDevices.Click
@@ -370,6 +388,8 @@ Public Class frm_Main
 #End Region
 
 #Region "Background Workers"
+
+#Region "bgw_syncSingleTrack"
     Private Sub bgw_syncSingleTrack_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles bgw_syncSingleTrack.DoWork
         Dim currentProgress As Integer = 0
         Dim progressPercentage As Integer = 0
@@ -400,15 +420,45 @@ Public Class frm_Main
             Case GetType(LogEntry)
                 bs_syncFiles_Log.Add(e.UserState)
             Case GetType(String)
-                str_Status_Sync.Text = e.UserState
+                str_Status_Task.Text = e.UserState
         End Select
     End Sub
 
     Private Sub bgw_syncSingleTrack_Completed() Handles bgw_syncSingleTrack.RunWorkerCompleted
-        str_Status_Sync.Text = "Done"
+        str_Status_Task.Text = "Done"
 
         bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.Message, "Sync finished"))
         log.Close()
     End Sub
+#End Region
+
+#Region "bgw_readPreset"
+    Private Sub bgw_readPreset_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles bgw_readPreset.DoWork
+        Dim currentProgress As Integer = 0
+        Dim progressPercentage As Integer = 0
+        Dim playlists As List(Of Playlist) = e.Argument
+
+        For Each playlist In playlists
+            bgw_readPreset.ReportProgress(progressPercentage, "Reading " & playlist.Filename & "...")
+            playlist.Read()
+
+            currentProgress += 1
+            progressPercentage = currentProgress * 100 / playlists.Count
+        Next
+
+        bgw_readPreset.ReportProgress(progressPercentage, "Done")
+    End Sub
+
+    Private Sub bgw_readPreset_ProgressChanged(sender As Object, e As System.ComponentModel.ProgressChangedEventArgs) Handles bgw_readPreset.ProgressChanged
+        str_Status_Progress.Text = e.ProgressPercentage & "%"
+        str_Status_Task.Text = e.UserState
+
+        Application.DoEvents()
+    End Sub
+
+    Private Sub bgw_readPreset_Completed() Handles bgw_readPreset.RunWorkerCompleted
+        tab_Control.Enabled = True
+    End Sub
+#End Region
 #End Region
 End Class
