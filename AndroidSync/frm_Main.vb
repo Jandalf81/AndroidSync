@@ -291,6 +291,8 @@ Public Class frm_Main
 
 #Region "frm_Main / grp_Devices"
     Private Sub btn_selectDevice_Click(sender As Object, e As EventArgs) Handles btn_selectDevice.Click
+        Me.Cursor = Cursors.AppStarting
+
         ' save preset of currently selected device
         If (selectedDevice IsNot Nothing And selectedDevice.Serial <> "") Then
             preset.Save(selectedDevice.Model + "_" + selectedDevice.Serial)
@@ -302,7 +304,7 @@ Public Class frm_Main
         ' load preset of newly selected device
         preset.Load(selectedDevice.Model + "_" + selectedDevice.Serial)
         txt_syncFiles_basePath_Local.Text = preset.BasePath_Local
-        txt_syncFiles_basePathRemote.Text = preset.BasePath_Remote
+        txt_syncFiles_basePath_Remote.Text = preset.BasePath_Remote
         chk_syncFiles_Convert.Checked = preset.ConvertFlag
         txt_syncFiles_LAMEOptions.Text = preset.ConvertString
         bs_Playlists.DataSource = preset.Playlists
@@ -327,8 +329,17 @@ Public Class frm_Main
 #Region "frm_Main / tab_syncFiles"
 
 #Region "frm_Main / tab_syncFiles / grp_Settings"
-    Private Sub txt_syncFiles_basePathRemote_TextChanged(sender As Object, e As EventArgs) Handles txt_syncFiles_basePathRemote.TextChanged
-        preset.BasePath_Remote = txt_syncFiles_basePathRemote.Text
+    Private Sub btn_syncFiles_basePath_Remote_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_basePath_Remote.Click
+        Dim frm_AndroidTree = New frm_AndroidTree(selectedDevice)
+
+        If (frm_AndroidTree.ShowDialog() = DialogResult.OK) Then
+            txt_syncFiles_basePath_Remote.Text = frm_AndroidTree.selectedPath
+            preset.BasePath_Remote = frm_AndroidTree.selectedPath
+        End If
+    End Sub
+
+    Private Sub txt_syncFiles_basePathRemote_TextChanged(sender As Object, e As EventArgs) Handles txt_syncFiles_basePath_Remote.TextChanged
+        preset.BasePath_Remote = txt_syncFiles_basePath_Remote.Text
     End Sub
 
     Private Sub btn_syncFiles_basePath_Local_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_basePath_Local.Click
@@ -458,6 +469,9 @@ Public Class frm_Main
 
     Private Sub bgw_readPreset_Completed() Handles bgw_readPreset.RunWorkerCompleted
         tab_Control.Enabled = True
+        btn_syncFiles_CancelSync.Enabled = False
+
+        Me.Cursor = Cursors.Default
     End Sub
 #End Region
 #End Region

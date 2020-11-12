@@ -78,6 +78,25 @@ Public Class AndroidDevice
         Return receiver.ToString()
     End Function
 
+    Public Function getSubdirectories(path As String) As List(Of String)
+        'If (path.Contains("Ärzte")) Then
+        '    MsgBox("hier")
+        'End If
+
+        Dim output As String = executeCommand("ls -L1p """ & path & """")
+        Dim retval As New List(Of String)
+
+        Dim lines() As String = output.Split(ControlChars.CrLf.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+
+        For Each line In lines
+            If (line.EndsWith("/")) Then
+                retval.Add(line.Replace("/", ""))
+            End If
+        Next
+
+        Return retval
+    End Function
+
     Public Sub upload(fromFile As String, toFile As String)
         Dim syncService As New SyncService(Me)
         Dim stream = System.IO.File.OpenRead(fromFile)
