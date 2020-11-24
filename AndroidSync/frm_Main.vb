@@ -15,6 +15,8 @@ Public Class frm_Main
     Public preset As New Preset()
 
     Public log As Log
+    Public playlistRemoved As Playlist
+    Public playlistAdded As Playlist
 
     Public WithEvents bgw_syncSingleTrack As New System.ComponentModel.BackgroundWorker() With {
         .WorkerReportsProgress = True,
@@ -128,6 +130,16 @@ Public Class frm_Main
 
         If (Not My.Computer.FileSystem.DirectoryExists(My.Application.Info.DirectoryPath + "\logs\")) Then
             My.Computer.FileSystem.CreateDirectory(My.Application.Info.DirectoryPath + "\logs\")
+        End If
+    End Sub
+
+    Private Sub cleanup()
+        ' remove temporary mp3 files
+        If (My.Computer.FileSystem.FileExists(My.Application.Info.DirectoryPath + "\tmp\toConvert.mp3") = True) Then
+            My.Computer.FileSystem.DeleteFile(My.Application.Info.DirectoryPath + "\tmp\toConvert.mp3")
+        End If
+        If (My.Computer.FileSystem.FileExists(My.Application.Info.DirectoryPath + "\tmp\converted.mp3") = True) Then
+            My.Computer.FileSystem.DeleteFile(My.Application.Info.DirectoryPath + "\tmp\converted.mp3")
         End If
     End Sub
 
@@ -272,12 +284,23 @@ Public Class frm_Main
         bs_Devices.DataSource = availableDevices
         dgv_Devices.DataSource = bs_Devices
     End Sub
+
+    Private Sub refreshLAME()
+        If (My.Computer.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\lame\lame.exe") = True) Then
+            Dim fvi As System.Diagnostics.FileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(My.Application.Info.DirectoryPath & "\lame\lame.exe")
+            str_Status_LAME.Text = fvi.ProductMajorPart & "." & fvi.ProductMinorPart & "." & fvi.ProductBuildPart & "." & fvi.ProductPrivatePart
+        Else
+            str_Status_LAME.Text = "n/a"
+        End If
+    End Sub
 #End Region
 
 #Region "Load and Show form"
     Private Sub frm_Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         prepareDirectories()
         prepareForm()
+
+        refreshLAME()
 
         tab_Control.Enabled = False
     End Sub
@@ -316,6 +339,8 @@ Public Class frm_Main
         chk_syncFiles_Convert.Checked = preset.ConvertFlag
         txt_syncFiles_LAMEOptions.Text = preset.ConvertString
         bs_Playlists.DataSource = preset.Playlists
+
+        chk_syncFiles_Convert_CheckedChanged(Nothing, Nothing)
 
         ' refresh other control elements
         tab_Control.Enabled = False
@@ -376,7 +401,21 @@ Public Class frm_Main
     End Sub
 
     Private Sub chk_syncFiles_Convert_CheckedChanged(sender As Object, e As EventArgs) Handles chk_syncFiles_Convert.CheckedChanged
-        preset.ConvertFlag = chk_syncFiles_Convert.CheckState
+        If (chk_syncFiles_Convert.Checked = True) Then
+            If (My.Computer.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\lame\lame.exe") = True) Then
+                preset.ConvertFlag = chk_syncFiles_Convert.Checked
+                txt_syncFiles_LAMEOptions.Enabled = True
+
+                refreshLAME()
+            Else
+                chk_syncFiles_Convert.CheckState = False
+
+                MsgBox("Please put lame.exe into the folder lame first!", MsgBoxStyle.OkOnly, "Missing lame.exe")
+            End If
+        Else
+            preset.ConvertFlag = chk_syncFiles_Convert.Checked
+            txt_syncFiles_LAMEOptions.Enabled = False
+        End If
     End Sub
 
     Private Sub txt_syncFiles_LAMEOptions_TextChanged(sender As Object, e As EventArgs) Handles txt_syncFiles_LAMEOptions.TextChanged
@@ -412,13 +451,24 @@ Public Class frm_Main
 #Region "frm_Main / tab_syncFiles / Buttons"
     Private Sub btn_syncFiles_StartSync_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_StartSync.Click
         grp_Devices.Enabled = False
-        tab_Control.Enabled = False
+        grp_syncFiles_Settings.Enabled = False
+        grp_syncFiles_Playlists.Enabled = False
+        btn_syncFiles_StartSync.Enabled = False
         btn_syncFiles_CancelSync.Enabled = True
 
         log = New Log(My.Application.Info.DirectoryPath & "\logs\" & selectedDevice.Model & "_" & selectedDevice.Serial)
         bs_syncFiles_Log.DataSource = log.LogEntries
 
+        Dim timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")
+        playlistRemoved = New Playlist(My.Application.Info.DirectoryPath & "\logs\" & selectedDevice.Model & "_" & selectedDevice.Serial & "\" & timestamp & "_removed.m3u8")
+        playlistAdded = New Playlist(My.Application.Info.DirectoryPath & "\logs\" & selectedDevice.Model & "_" & selectedDevice.Serial & "\" & timestamp & "_added.m3u8")
+
         bgw_syncFiles.RunWorkerAsync()
+    End Sub
+
+    Private Sub btn_syncFiles_CancelSync_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_CancelSync.Click
+        bgw_syncFiles.CancelAsync()
+        btn_syncFiles_CancelSync.Text = "Cancelling..."
     End Sub
 #End Region
 
@@ -504,20 +554,24 @@ Public Class frm_Main
 #Region "bgw_syncFiles"
     Private Sub bgw_syncFiles_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles bgw_syncFiles.DoWork
         Dim progressPercentage As Integer = 0
+        Dim todo As Integer = 0
+        Dim done As Integer = 0
+
         Dim remotePlaylist As Playlist
         Dim localPlaylist As New Playlist()
         Dim localPlaylistsCombinedTracks As Integer = 0
 
-        Dim playlistToAdd As New Playlist()
-        Dim playlistToRemove As New Playlist()
+        Dim playlistToAdd As Playlist
+        Dim playlistToRemove As Playlist
 
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync files started"))
 
-        bgw_syncFiles.ReportProgress(0, "Getting track list from device...")
+        bgw_syncFiles.ReportProgress(progressPercentage, "Getting track list from device...")
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Getting track list from device..."))
         remotePlaylist = selectedDevice.getTracks(preset.BasePath_Remote)
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Got " & remotePlaylist.NumberOfTracks & " tracks from device"))
 
+        bgw_syncFiles.ReportProgress(progressPercentage, "Combining local playlists...")
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Combining local playlists..."))
         For Each playlist In preset.Playlists
             localPlaylist.combineWith(playlist, Playlist.compareMode.pathLocal)
@@ -525,26 +579,76 @@ Public Class frm_Main
         Next
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Got " & localPlaylist.NumberOfTracks & " distinct tracks from " & preset.Playlists.Count & " playlist(s) with " & localPlaylistsCombinedTracks & " entries"))
 
+        bgw_syncFiles.ReportProgress(progressPercentage, "Comparing local and remote tracks...")
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Comparing local and remote tracks..."))
         remotePlaylist.generateLocalPath(preset)
-        playlistToAdd = remotePlaylist.getDiff(localPlaylist)
-        playlistToRemove = localPlaylist.getDiff(remotePlaylist)
+        playlistToAdd = remotePlaylist.getMissing(localPlaylist)
+        playlistToRemove = localPlaylist.getMissing(remotePlaylist)
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Found " & playlistToRemove.NumberOfTracks & " tracks to remove from device"))
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Found " & playlistToAdd.NumberOfTracks & " tracks to add to device"))
 
+        todo = playlistToRemove.Tracks.Count + playlistToAdd.Tracks.Count
+
+        bgw_syncFiles.ReportProgress(progressPercentage, "Removing old files...")
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Removing old files..."))
         For Each track In playlistToRemove.Tracks
             bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Deleting...", Nothing, track.PathRemote))
             ' ToDo: Delete file, cover and empty parent dirs
+
+            playlistRemoved.Tracks.Add(track)
+            done += 1
+            progressPercentage = done * 100 / todo
+
+            If (bgw_syncFiles.CancellationPending = True) Then
+                e.Cancel = True
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync canceled by user"))
+
+                cleanup()
+                playlistRemoved.write_m3u8()
+                Exit Sub
+            End If
         Next
 
+        bgw_syncFiles.ReportProgress(progressPercentage, "Adding new files...")
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Adding new files..."))
         playlistToAdd.generateRemotePath(preset)
         For Each track In playlistToAdd.Tracks
-            bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading...", track.PathLocal, track.PathRemote))
-            ' ToDo: Convert and upload new file and cover
+            Application.DoEvents()
+
+            If (preset.ConvertFlag = True) Then
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Converting...", track.PathLocal, Nothing))
+                track.convert(preset)
+
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading...", track.PathLocal, track.PathRemote))
+                selectedDevice.upload(track.PathLocalTemp, track.PathRemote)
+
+                cleanup()
+            Else
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading...", track.PathLocal, track.PathRemote))
+                selectedDevice.upload(track.PathLocal, track.PathRemote)
+            End If
+            ' ToDo: upload cover
+
+            playlistAdded.Tracks.Add(track)
+            done += 1
+            progressPercentage = done * 100 / todo
+
+            If (bgw_syncFiles.CancellationPending = True) Then
+                e.Cancel = True
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync canceled by user"))
+
+                cleanup()
+                playlistRemoved.write_m3u8()
+                playlistAdded.write_m3u8()
+                Exit Sub
+            End If
         Next
 
+        cleanup()
+        playlistRemoved.write_m3u8()
+        playlistAdded.write_m3u8()
+
+        bgw_syncFiles.ReportProgress(progressPercentage, "Sync files finished")
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync files finished"))
     End Sub
 
@@ -559,15 +663,19 @@ Public Class frm_Main
         End Select
 
         dgv_syncFiles_Log.AutoResizeColumns(DataGridViewAutoSizeColumnMode.AllCells)
+        dgv_syncFiles_Log.FirstDisplayedScrollingRowIndex = dgv_syncFiles_Log.RowCount - 1
     End Sub
 
     Private Sub bgw_syncFiles_Completed() Handles bgw_syncFiles.RunWorkerCompleted
         str_Status_Task.Text = "Done"
+        btn_syncFiles_CancelSync.Text = "cancel Sync"
 
         log.Close()
 
         grp_Devices.Enabled = True
-        tab_Control.Enabled = True
+        grp_syncFiles_Settings.Enabled = True
+        grp_syncFiles_Playlists.Enabled = True
+        btn_syncFiles_StartSync.Enabled = True
         btn_syncFiles_CancelSync.Enabled = False
     End Sub
 #End Region

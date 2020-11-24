@@ -105,4 +105,32 @@
     Public Sub generateLocalPath(preset As Preset)
         Me._pathLocal = Me._pathRemote.Replace(preset.BasePath_Remote, preset.BasePath_Local).Replace("/", "\")
     End Sub
+
+
+    Public Function convert(preset As Preset) As Integer
+        Dim retval As Integer = 0
+
+        Me._pathLocalTemp = My.Application.Info.DirectoryPath + "\tmp\toConvert.mp3"
+        FileCopy(Me._pathLocal, Me._pathLocalTemp)
+
+        Dim lame As New Process()
+        With lame.StartInfo
+            .FileName = My.Application.Info.DirectoryPath + "\lame\lame.exe"
+            .Arguments = preset.ConvertString + " """ + Me._pathLocalTemp + """ """ + My.Application.Info.DirectoryPath + "\tmp\converted.mp3"""
+            .CreateNoWindow = True
+            .UseShellExecute = False
+        End With
+
+        lame.Start()
+        lame.WaitForExit()
+
+        retval = lame.ExitCode
+        lame.Dispose()
+
+        Me._pathLocalTemp = My.Application.Info.DirectoryPath + "\tmp\converted.mp3"
+        Me._sizeLocal = New IO.FileInfo(Me._pathLocal).Length
+        Me._sizeRemote = New IO.FileInfo(Me._pathLocalTemp).Length
+
+        Return retval
+    End Function
 End Class

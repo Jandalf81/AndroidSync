@@ -71,6 +71,20 @@ Public Class Playlist
         Loop
     End Sub
 
+    Public Sub write_m3u8()
+        Dim content As String = ""
+
+        For Each track In Me._tracks
+            content += track.PathLocal & vbCrLf
+        Next
+
+        Dim file As System.IO.StreamWriter
+        file = My.Computer.FileSystem.OpenTextFileWriter(Me._filename, False)
+        file.Write(content)
+
+        file.Close()
+        file.Dispose()
+    End Sub
 
     Public Enum compareMode
         pathLocal = 0
@@ -103,7 +117,7 @@ Public Class Playlist
         Return retval
     End Function
 
-    Public Function getDiff(otherPlaylist As Playlist) As Playlist
+    Public Function getMissing(otherPlaylist As Playlist) As Playlist
         Dim retval As New Playlist()
 
         For Each track In otherPlaylist.Tracks

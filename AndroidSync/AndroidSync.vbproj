@@ -219,5 +219,10 @@
   <ItemGroup>
     <None Include="Resources\folder_explore.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="lame\readme.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
