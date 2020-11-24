@@ -69,7 +69,7 @@
 
 
     Public Enum LogEntryType
-        Message = 0
+        INFO = 0
         SyncFiles = 1
         SyncRatings = 2
     End Enum

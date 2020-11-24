@@ -79,10 +79,6 @@ Public Class AndroidDevice
     End Function
 
     Public Function getSubdirectories(path As String) As List(Of String)
-        'If (path.Contains("Ärzte")) Then
-        '    MsgBox("hier")
-        'End If
-
         Dim output As String = executeCommand("ls -L1p """ & path & """")
         Dim retval As New List(Of String)
 
@@ -93,6 +89,39 @@ Public Class AndroidDevice
                 retval.Add(line.Replace("/", ""))
             End If
         Next
+
+        Return retval
+    End Function
+
+    Public Function getTracks(path As String) As Playlist
+        Dim retval As New Playlist()
+        Dim fields() As String
+        Dim findReturnsSize As Boolean = True
+
+        ' including folder.jpg
+        'Dim output As String = executeCommand("find /sdcard/Music/ -type f -name *.mp3 -or -name *.jpg -printf ""%p|%s\n""")
+        ' excluding folder.jpg
+        Dim output As String = executeCommand("find " & path & "/ -type f -name *.mp3 -printf ""%p|%s\n""")
+
+        If (output = "find: bad arg '-printf'" & vbCrLf) Then
+            output = executeCommand("find " & path & "/ -type f -name *.mp3")
+            findReturnsSize = False
+        End If
+
+        Dim lines() As String = output.Split(ControlChars.CrLf.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+
+        ' ToDo: read text file for files with too long original path
+        If (findReturnsSize = True) Then
+            For Each line In lines
+                fields = line.Split({"|"}, StringSplitOptions.RemoveEmptyEntries)
+
+                retval.Tracks.add(New Track(PathRemote:=fields(0), SizeRemote:=fields(1)))
+            Next
+        Else
+            For Each line In lines
+                retval.Tracks.add(New Track(PathRemote:=line, SizeRemote:=0))
+            Next
+        End If
 
         Return retval
     End Function

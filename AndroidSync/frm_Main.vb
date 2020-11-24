@@ -26,6 +26,11 @@ Public Class frm_Main
         .WorkerSupportsCancellation = False
     }
 
+    Public WithEvents bgw_syncFiles As New System.ComponentModel.BackgroundWorker() With {
+        .WorkerReportsProgress = True,
+        .WorkerSupportsCancellation = True
+    }
+
     Private Sub PoC_btn_getListOfMP3_Click(sender As Object, e As EventArgs)
         str_Status_ADBserver.Text = "Starte ADB-Server..."
         Dim ADBserver As SharpAdbClient.AdbServer = New SharpAdbClient.AdbServer()
@@ -172,6 +177,8 @@ Public Class frm_Main
         Dim col_Playlists_NumberOfTracks As New DataGridViewTextBoxColumn()
         col_Playlists_NumberOfTracks.DataPropertyName = "NumberOfTracks"
         col_Playlists_NumberOfTracks.Name = "Tracks"
+        col_Playlists_NumberOfTracks.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+        col_Playlists_NumberOfTracks.DefaultCellStyle.Format = "##,###"
 
         With dgv_Playlists
             .ReadOnly = True
@@ -193,6 +200,7 @@ Public Class frm_Main
         Dim col_syncFiles_Log_Timestamp As New DataGridViewTextBoxColumn()
         col_syncFiles_Log_Timestamp.DataPropertyName = "Timestamp"
         col_syncFiles_Log_Timestamp.Name = "Timestamp"
+        col_syncFiles_Log_Timestamp.DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss"
 
         Dim col_syncFiles_Log_Type As New DataGridViewTextBoxColumn()
         col_syncFiles_Log_Type.DataPropertyName = "Type"
@@ -204,11 +212,11 @@ Public Class frm_Main
 
         Dim col_syncFiles_Log_fromFile As New DataGridViewTextBoxColumn()
         col_syncFiles_Log_fromFile.DataPropertyName = "fromFile"
-        col_syncFiles_Log_fromFile.Name = "from File"
+        col_syncFiles_Log_fromFile.Name = "local file"
 
         Dim col_syncFiles_Log_toFile As New DataGridViewTextBoxColumn()
         col_syncFiles_Log_toFile.DataPropertyName = "toFile"
-        col_syncFiles_Log_toFile.Name = "to File"
+        col_syncFiles_Log_toFile.Name = "remote file"
 
         With dgv_syncFiles_Log
             .AllowUserToAddRows = False
@@ -310,11 +318,14 @@ Public Class frm_Main
         bs_Playlists.DataSource = preset.Playlists
 
         ' refresh other control elements
+        tab_Control.Enabled = False
         txt_ModelNameProductSerial.Text = selectedDevice.Model & " / " & selectedDevice.Name & " / " & selectedDevice.Product & " / " & selectedDevice.Serial
 
         selectedDevice.refreshCapacity()
         MyProgressBar1.myText = String.Format("{0} GiB used of {1} GiB ({2} GiB / {3}% free)", Math.Round(selectedDevice.CapacityUsed / 1024 / 1024, 2), Math.Round(selectedDevice.Capacity / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree * 100 / selectedDevice.Capacity, 2))
         MyProgressBar1.myValue = Math.Round(selectedDevice.CapacityUsed * 100 / selectedDevice.Capacity, 0)
+
+        bs_syncFiles_Log.Clear()
 
         str_Status_Device.Text = selectedDevice.Model
 
@@ -391,8 +402,23 @@ Public Class frm_Main
     End Sub
 
     Private Sub btn_syncFiles_Playlists_Remove_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_Playlists_Remove.Click
-        Dim selectedPlaylist As Playlist = dgv_Playlists.SelectedRows(0).DataBoundItem
-        bs_Playlists.Remove(selectedPlaylist)
+        If (dgv_Playlists.SelectedRows.Count > 0) Then
+            Dim selectedPlaylist As Playlist = dgv_Playlists.SelectedRows(0).DataBoundItem
+            bs_Playlists.Remove(selectedPlaylist)
+        End If
+    End Sub
+#End Region
+
+#Region "frm_Main / tab_syncFiles / Buttons"
+    Private Sub btn_syncFiles_StartSync_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_StartSync.Click
+        grp_Devices.Enabled = False
+        tab_Control.Enabled = False
+        btn_syncFiles_CancelSync.Enabled = True
+
+        log = New Log(My.Application.Info.DirectoryPath & "\logs\" & selectedDevice.Model & "_" & selectedDevice.Serial)
+        bs_syncFiles_Log.DataSource = log.LogEntries
+
+        bgw_syncFiles.RunWorkerAsync()
     End Sub
 #End Region
 
@@ -407,7 +433,7 @@ Public Class frm_Main
         Dim fromFiles() As String = e.Argument
         Dim count As Integer = fromFiles.Count
 
-        bgw_syncSingleTrack.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.Message, "Sync started"))
+        bgw_syncSingleTrack.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync started"))
 
         For Each fromFile As String In fromFiles
             currentProgress += 1
@@ -438,7 +464,7 @@ Public Class frm_Main
     Private Sub bgw_syncSingleTrack_Completed() Handles bgw_syncSingleTrack.RunWorkerCompleted
         str_Status_Task.Text = "Done"
 
-        bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.Message, "Sync finished"))
+        bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.INFO, "Sync finished"))
         log.Close()
     End Sub
 #End Region
@@ -472,6 +498,77 @@ Public Class frm_Main
         btn_syncFiles_CancelSync.Enabled = False
 
         Me.Cursor = Cursors.Default
+    End Sub
+#End Region
+
+#Region "bgw_syncFiles"
+    Private Sub bgw_syncFiles_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles bgw_syncFiles.DoWork
+        Dim progressPercentage As Integer = 0
+        Dim remotePlaylist As Playlist
+        Dim localPlaylist As New Playlist()
+        Dim localPlaylistsCombinedTracks As Integer = 0
+
+        Dim playlistToAdd As New Playlist()
+        Dim playlistToRemove As New Playlist()
+
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync files started"))
+
+        bgw_syncFiles.ReportProgress(0, "Getting track list from device...")
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Getting track list from device..."))
+        remotePlaylist = selectedDevice.getTracks(preset.BasePath_Remote)
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Got " & remotePlaylist.NumberOfTracks & " tracks from device"))
+
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Combining local playlists..."))
+        For Each playlist In preset.Playlists
+            localPlaylist.combineWith(playlist, Playlist.compareMode.pathLocal)
+            localPlaylistsCombinedTracks += playlist.NumberOfTracks
+        Next
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Got " & localPlaylist.NumberOfTracks & " distinct tracks from " & preset.Playlists.Count & " playlist(s) with " & localPlaylistsCombinedTracks & " entries"))
+
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Comparing local and remote tracks..."))
+        remotePlaylist.generateLocalPath(preset)
+        playlistToAdd = remotePlaylist.getDiff(localPlaylist)
+        playlistToRemove = localPlaylist.getDiff(remotePlaylist)
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Found " & playlistToRemove.NumberOfTracks & " tracks to remove from device"))
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Found " & playlistToAdd.NumberOfTracks & " tracks to add to device"))
+
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Removing old files..."))
+        For Each track In playlistToRemove.Tracks
+            bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Deleting...", Nothing, track.PathRemote))
+            ' ToDo: Delete file, cover and empty parent dirs
+        Next
+
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Adding new files..."))
+        playlistToAdd.generateRemotePath(preset)
+        For Each track In playlistToAdd.Tracks
+            bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading...", track.PathLocal, track.PathRemote))
+            ' ToDo: Convert and upload new file and cover
+        Next
+
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync files finished"))
+    End Sub
+
+    Private Sub bgw_syncFiles_ProgressChanged(sender As Object, e As System.ComponentModel.ProgressChangedEventArgs) Handles bgw_syncFiles.ProgressChanged
+        str_Status_Progress.Text = e.ProgressPercentage & "%"
+
+        Select Case e.UserState.GetType()
+            Case GetType(LogEntry)
+                bs_syncFiles_Log.Add(e.UserState)
+            Case GetType(String)
+                str_Status_Task.Text = e.UserState
+        End Select
+
+        dgv_syncFiles_Log.AutoResizeColumns(DataGridViewAutoSizeColumnMode.AllCells)
+    End Sub
+
+    Private Sub bgw_syncFiles_Completed() Handles bgw_syncFiles.RunWorkerCompleted
+        str_Status_Task.Text = "Done"
+
+        log.Close()
+
+        grp_Devices.Enabled = True
+        tab_Control.Enabled = True
+        btn_syncFiles_CancelSync.Enabled = False
     End Sub
 #End Region
 #End Region

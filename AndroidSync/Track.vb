@@ -97,4 +97,12 @@
         Me._sizeRemote = SizeRemote
     End Sub
 
+
+    Public Sub generateRemotePath(preset As Preset)
+        Me._pathRemote = Me._pathLocal.Replace(preset.BasePath_Local, preset.BasePath_Remote).Replace("\", "/")
+    End Sub
+
+    Public Sub generateLocalPath(preset As Preset)
+        Me._pathLocal = Me._pathRemote.Replace(preset.BasePath_Remote, preset.BasePath_Local).Replace("/", "\")
+    End Sub
 End Class

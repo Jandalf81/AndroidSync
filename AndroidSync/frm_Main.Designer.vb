@@ -42,12 +42,17 @@ Partial Class frm_Main
         Me.ToolStripStatusLabel3 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.str_Status_Task = New System.Windows.Forms.ToolStripStatusLabel()
         Me.grp_Devices = New System.Windows.Forms.GroupBox()
+        Me.btn_refreshDevices = New System.Windows.Forms.Button()
+        Me.btn_selectDevice = New System.Windows.Forms.Button()
         Me.dgv_Devices = New System.Windows.Forms.DataGridView()
         Me.tab_Control = New System.Windows.Forms.TabControl()
         Me.tab_syncFiles_SettingsPlaylists = New System.Windows.Forms.TabPage()
+        Me.btn_syncFiles_CancelSync = New System.Windows.Forms.Button()
+        Me.btn_syncFiles_StartSync = New System.Windows.Forms.Button()
         Me.dgv_syncFiles_Log = New System.Windows.Forms.DataGridView()
         Me.tableSyncFiles_SettingsPlaylists = New System.Windows.Forms.TableLayoutPanel()
         Me.grp_syncFiles_Settings = New System.Windows.Forms.GroupBox()
+        Me.btn_syncFiles_basePath_Remote = New System.Windows.Forms.Button()
         Me.txt_syncFiles_LAMEOptions = New System.Windows.Forms.TextBox()
         Me.lbl_syncFiles_LAMEOptions = New System.Windows.Forms.Label()
         Me.chk_syncFiles_Convert = New System.Windows.Forms.CheckBox()
@@ -58,6 +63,8 @@ Partial Class frm_Main
         Me.lbl_syncFiles_basePath_Local = New System.Windows.Forms.Label()
         Me.grp_syncFiles_Playlists = New System.Windows.Forms.GroupBox()
         Me.table_syncFiles_Playlists_Buttons = New System.Windows.Forms.TableLayoutPanel()
+        Me.btn_syncFiles_Playlists_Add = New System.Windows.Forms.Button()
+        Me.btn_syncFiles_Playlists_Remove = New System.Windows.Forms.Button()
         Me.dgv_Playlists = New System.Windows.Forms.DataGridView()
         Me.tab_syncRatings = New System.Windows.Forms.TabPage()
         Me.grp_selectedDevice = New System.Windows.Forms.GroupBox()
@@ -67,13 +74,6 @@ Partial Class frm_Main
         Me.MyProgressBar1 = New WindowsControlLibrary1.myProgressBar()
         Me.lbl_DiskSpace = New System.Windows.Forms.Label()
         Me.PoC_btn_uploadFile = New System.Windows.Forms.Button()
-        Me.btn_syncFiles_basePath_Remote = New System.Windows.Forms.Button()
-        Me.btn_syncFiles_CancelSync = New System.Windows.Forms.Button()
-        Me.btn_syncFiles_StartSync = New System.Windows.Forms.Button()
-        Me.btn_syncFiles_Playlists_Add = New System.Windows.Forms.Button()
-        Me.btn_syncFiles_Playlists_Remove = New System.Windows.Forms.Button()
-        Me.btn_refreshDevices = New System.Windows.Forms.Button()
-        Me.btn_selectDevice = New System.Windows.Forms.Button()
         Me.str_Status.SuspendLayout()
         Me.grp_Devices.SuspendLayout()
         CType(Me.dgv_Devices, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -163,6 +163,33 @@ Partial Class frm_Main
         Me.grp_Devices.TabStop = False
         Me.grp_Devices.Text = "Devices"
         '
+        'btn_refreshDevices
+        '
+        Me.btn_refreshDevices.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btn_refreshDevices.Image = Global.AndroidSync.My.Resources.Resources.arrow_refresh
+        Me.btn_refreshDevices.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btn_refreshDevices.Location = New System.Drawing.Point(959, 19)
+        Me.btn_refreshDevices.Name = "btn_refreshDevices"
+        Me.btn_refreshDevices.Size = New System.Drawing.Size(175, 97)
+        Me.btn_refreshDevices.TabIndex = 2
+        Me.btn_refreshDevices.Text = "refresh Devices"
+        Me.btn_refreshDevices.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.btn_refreshDevices.UseVisualStyleBackColor = True
+        '
+        'btn_selectDevice
+        '
+        Me.btn_selectDevice.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btn_selectDevice.Image = Global.AndroidSync.My.Resources.Resources.accept
+        Me.btn_selectDevice.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btn_selectDevice.Location = New System.Drawing.Point(6, 122)
+        Me.btn_selectDevice.Name = "btn_selectDevice"
+        Me.btn_selectDevice.Size = New System.Drawing.Size(1128, 47)
+        Me.btn_selectDevice.TabIndex = 1
+        Me.btn_selectDevice.Text = "use selected Device"
+        Me.btn_selectDevice.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.btn_selectDevice.UseVisualStyleBackColor = True
+        '
         'dgv_Devices
         '
         Me.dgv_Devices.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
@@ -202,6 +229,33 @@ Partial Class frm_Main
         Me.tab_syncFiles_SettingsPlaylists.Size = New System.Drawing.Size(1132, 476)
         Me.tab_syncFiles_SettingsPlaylists.TabIndex = 0
         Me.tab_syncFiles_SettingsPlaylists.Text = "sync Files"
+        '
+        'btn_syncFiles_CancelSync
+        '
+        Me.btn_syncFiles_CancelSync.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btn_syncFiles_CancelSync.Image = Global.AndroidSync.My.Resources.Resources.cancel
+        Me.btn_syncFiles_CancelSync.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btn_syncFiles_CancelSync.Location = New System.Drawing.Point(955, 214)
+        Me.btn_syncFiles_CancelSync.Name = "btn_syncFiles_CancelSync"
+        Me.btn_syncFiles_CancelSync.Size = New System.Drawing.Size(165, 47)
+        Me.btn_syncFiles_CancelSync.TabIndex = 3
+        Me.btn_syncFiles_CancelSync.Text = "cancel Sync"
+        Me.btn_syncFiles_CancelSync.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.btn_syncFiles_CancelSync.UseVisualStyleBackColor = True
+        '
+        'btn_syncFiles_StartSync
+        '
+        Me.btn_syncFiles_StartSync.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btn_syncFiles_StartSync.Image = Global.AndroidSync.My.Resources.Resources.accept
+        Me.btn_syncFiles_StartSync.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btn_syncFiles_StartSync.Location = New System.Drawing.Point(3, 214)
+        Me.btn_syncFiles_StartSync.Name = "btn_syncFiles_StartSync"
+        Me.btn_syncFiles_StartSync.Size = New System.Drawing.Size(946, 47)
+        Me.btn_syncFiles_StartSync.TabIndex = 2
+        Me.btn_syncFiles_StartSync.Text = "start Sync"
+        Me.btn_syncFiles_StartSync.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.btn_syncFiles_StartSync.UseVisualStyleBackColor = True
         '
         'dgv_syncFiles_Log
         '
@@ -273,6 +327,19 @@ Partial Class frm_Main
         Me.grp_syncFiles_Settings.TabIndex = 0
         Me.grp_syncFiles_Settings.TabStop = False
         Me.grp_syncFiles_Settings.Text = "Settings"
+        '
+        'btn_syncFiles_basePath_Remote
+        '
+        Me.btn_syncFiles_basePath_Remote.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btn_syncFiles_basePath_Remote.Image = Global.AndroidSync.My.Resources.Resources.folder_explore
+        Me.btn_syncFiles_basePath_Remote.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btn_syncFiles_basePath_Remote.Location = New System.Drawing.Point(491, 40)
+        Me.btn_syncFiles_basePath_Remote.Name = "btn_syncFiles_basePath_Remote"
+        Me.btn_syncFiles_basePath_Remote.Size = New System.Drawing.Size(57, 23)
+        Me.btn_syncFiles_basePath_Remote.TabIndex = 8
+        Me.btn_syncFiles_basePath_Remote.Text = "Set"
+        Me.btn_syncFiles_basePath_Remote.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.btn_syncFiles_basePath_Remote.UseVisualStyleBackColor = True
         '
         'txt_syncFiles_LAMEOptions
         '
@@ -381,6 +448,34 @@ Partial Class frm_Main
         Me.table_syncFiles_Playlists_Buttons.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.table_syncFiles_Playlists_Buttons.Size = New System.Drawing.Size(542, 47)
         Me.table_syncFiles_Playlists_Buttons.TabIndex = 1
+        '
+        'btn_syncFiles_Playlists_Add
+        '
+        Me.btn_syncFiles_Playlists_Add.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.btn_syncFiles_Playlists_Add.Image = Global.AndroidSync.My.Resources.Resources.script_add
+        Me.btn_syncFiles_Playlists_Add.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btn_syncFiles_Playlists_Add.Location = New System.Drawing.Point(0, 0)
+        Me.btn_syncFiles_Playlists_Add.Margin = New System.Windows.Forms.Padding(0, 0, 3, 0)
+        Me.btn_syncFiles_Playlists_Add.Name = "btn_syncFiles_Playlists_Add"
+        Me.btn_syncFiles_Playlists_Add.Size = New System.Drawing.Size(268, 47)
+        Me.btn_syncFiles_Playlists_Add.TabIndex = 0
+        Me.btn_syncFiles_Playlists_Add.Text = "add Playlist"
+        Me.btn_syncFiles_Playlists_Add.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.btn_syncFiles_Playlists_Add.UseVisualStyleBackColor = True
+        '
+        'btn_syncFiles_Playlists_Remove
+        '
+        Me.btn_syncFiles_Playlists_Remove.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.btn_syncFiles_Playlists_Remove.Image = Global.AndroidSync.My.Resources.Resources.script_delete
+        Me.btn_syncFiles_Playlists_Remove.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btn_syncFiles_Playlists_Remove.Location = New System.Drawing.Point(274, 0)
+        Me.btn_syncFiles_Playlists_Remove.Margin = New System.Windows.Forms.Padding(3, 0, 0, 0)
+        Me.btn_syncFiles_Playlists_Remove.Name = "btn_syncFiles_Playlists_Remove"
+        Me.btn_syncFiles_Playlists_Remove.Size = New System.Drawing.Size(268, 47)
+        Me.btn_syncFiles_Playlists_Remove.TabIndex = 1
+        Me.btn_syncFiles_Playlists_Remove.Text = "remove Playlist"
+        Me.btn_syncFiles_Playlists_Remove.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.btn_syncFiles_Playlists_Remove.UseVisualStyleBackColor = True
         '
         'dgv_Playlists
         '
@@ -514,100 +609,6 @@ Partial Class frm_Main
         Me.PoC_btn_uploadFile.TabIndex = 5
         Me.PoC_btn_uploadFile.Text = "PoC_uploadFile"
         Me.PoC_btn_uploadFile.UseVisualStyleBackColor = True
-        '
-        'btn_syncFiles_basePath_Remote
-        '
-        Me.btn_syncFiles_basePath_Remote.Image = Global.AndroidSync.My.Resources.Resources.folder_explore
-        Me.btn_syncFiles_basePath_Remote.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btn_syncFiles_basePath_Remote.Location = New System.Drawing.Point(491, 40)
-        Me.btn_syncFiles_basePath_Remote.Name = "btn_syncFiles_basePath_Remote"
-        Me.btn_syncFiles_basePath_Remote.Size = New System.Drawing.Size(57, 23)
-        Me.btn_syncFiles_basePath_Remote.TabIndex = 8
-        Me.btn_syncFiles_basePath_Remote.Text = "Set"
-        Me.btn_syncFiles_basePath_Remote.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btn_syncFiles_basePath_Remote.UseVisualStyleBackColor = True
-        '
-        'btn_syncFiles_CancelSync
-        '
-        Me.btn_syncFiles_CancelSync.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btn_syncFiles_CancelSync.Image = Global.AndroidSync.My.Resources.Resources.cancel
-        Me.btn_syncFiles_CancelSync.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btn_syncFiles_CancelSync.Location = New System.Drawing.Point(955, 214)
-        Me.btn_syncFiles_CancelSync.Name = "btn_syncFiles_CancelSync"
-        Me.btn_syncFiles_CancelSync.Size = New System.Drawing.Size(165, 47)
-        Me.btn_syncFiles_CancelSync.TabIndex = 3
-        Me.btn_syncFiles_CancelSync.Text = "cancel Sync"
-        Me.btn_syncFiles_CancelSync.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btn_syncFiles_CancelSync.UseVisualStyleBackColor = True
-        '
-        'btn_syncFiles_StartSync
-        '
-        Me.btn_syncFiles_StartSync.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btn_syncFiles_StartSync.Image = Global.AndroidSync.My.Resources.Resources.accept
-        Me.btn_syncFiles_StartSync.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btn_syncFiles_StartSync.Location = New System.Drawing.Point(3, 214)
-        Me.btn_syncFiles_StartSync.Name = "btn_syncFiles_StartSync"
-        Me.btn_syncFiles_StartSync.Size = New System.Drawing.Size(946, 47)
-        Me.btn_syncFiles_StartSync.TabIndex = 2
-        Me.btn_syncFiles_StartSync.Text = "start Sync"
-        Me.btn_syncFiles_StartSync.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btn_syncFiles_StartSync.UseVisualStyleBackColor = True
-        '
-        'btn_syncFiles_Playlists_Add
-        '
-        Me.btn_syncFiles_Playlists_Add.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.btn_syncFiles_Playlists_Add.Image = Global.AndroidSync.My.Resources.Resources.script_add
-        Me.btn_syncFiles_Playlists_Add.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btn_syncFiles_Playlists_Add.Location = New System.Drawing.Point(0, 0)
-        Me.btn_syncFiles_Playlists_Add.Margin = New System.Windows.Forms.Padding(0, 0, 3, 0)
-        Me.btn_syncFiles_Playlists_Add.Name = "btn_syncFiles_Playlists_Add"
-        Me.btn_syncFiles_Playlists_Add.Size = New System.Drawing.Size(268, 47)
-        Me.btn_syncFiles_Playlists_Add.TabIndex = 0
-        Me.btn_syncFiles_Playlists_Add.Text = "add Playlist"
-        Me.btn_syncFiles_Playlists_Add.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btn_syncFiles_Playlists_Add.UseVisualStyleBackColor = True
-        '
-        'btn_syncFiles_Playlists_Remove
-        '
-        Me.btn_syncFiles_Playlists_Remove.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.btn_syncFiles_Playlists_Remove.Image = Global.AndroidSync.My.Resources.Resources.script_delete
-        Me.btn_syncFiles_Playlists_Remove.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btn_syncFiles_Playlists_Remove.Location = New System.Drawing.Point(274, 0)
-        Me.btn_syncFiles_Playlists_Remove.Margin = New System.Windows.Forms.Padding(3, 0, 0, 0)
-        Me.btn_syncFiles_Playlists_Remove.Name = "btn_syncFiles_Playlists_Remove"
-        Me.btn_syncFiles_Playlists_Remove.Size = New System.Drawing.Size(268, 47)
-        Me.btn_syncFiles_Playlists_Remove.TabIndex = 1
-        Me.btn_syncFiles_Playlists_Remove.Text = "remove Playlist"
-        Me.btn_syncFiles_Playlists_Remove.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btn_syncFiles_Playlists_Remove.UseVisualStyleBackColor = True
-        '
-        'btn_refreshDevices
-        '
-        Me.btn_refreshDevices.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btn_refreshDevices.Image = Global.AndroidSync.My.Resources.Resources.arrow_refresh
-        Me.btn_refreshDevices.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btn_refreshDevices.Location = New System.Drawing.Point(959, 19)
-        Me.btn_refreshDevices.Name = "btn_refreshDevices"
-        Me.btn_refreshDevices.Size = New System.Drawing.Size(175, 97)
-        Me.btn_refreshDevices.TabIndex = 2
-        Me.btn_refreshDevices.Text = "refresh Devices"
-        Me.btn_refreshDevices.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btn_refreshDevices.UseVisualStyleBackColor = True
-        '
-        'btn_selectDevice
-        '
-        Me.btn_selectDevice.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btn_selectDevice.Image = Global.AndroidSync.My.Resources.Resources.accept
-        Me.btn_selectDevice.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btn_selectDevice.Location = New System.Drawing.Point(6, 122)
-        Me.btn_selectDevice.Name = "btn_selectDevice"
-        Me.btn_selectDevice.Size = New System.Drawing.Size(1128, 47)
-        Me.btn_selectDevice.TabIndex = 1
-        Me.btn_selectDevice.Text = "use selected Device"
-        Me.btn_selectDevice.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btn_selectDevice.UseVisualStyleBackColor = True
         '
         'frm_Main
         '

@@ -89,8 +89,6 @@
                     ' add new node to PARENTNODE
                     parentNode.Nodes.Add(newNode)
             End Select
-
-            Application.DoEvents()
         Next
     End Sub
 

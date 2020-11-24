@@ -29,6 +29,8 @@
     End Sub
 
     Private Sub handleNewEntries(sender As Object, e As Specialized.NotifyCollectionChangedEventArgs) Handles _logEntries.CollectionChanged
+        If (e.NewItems Is Nothing) Then Exit Sub
+
         For Each item In e.NewItems
             Dim logEntry = CType(item, LogEntry)
 
