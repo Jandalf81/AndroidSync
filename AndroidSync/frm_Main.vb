@@ -208,6 +208,9 @@ Public Class frm_Main
 
         bs_Playlists.DataSource = preset.Playlists
 
+        prg_ProgressSync.myText = "Progress: 0%"
+        prg_ProgressSync.myValue = 0
+
         ' dgv_syncFiles_Log
         Dim col_syncFiles_Log_Timestamp As New DataGridViewTextBoxColumn()
         col_syncFiles_Log_Timestamp.DataPropertyName = "Timestamp"
@@ -252,6 +255,8 @@ Public Class frm_Main
         ' Status Strip
         str_Status_ADBserver.Text = "waiting..."
         str_Status_Device.Text = "no device selected"
+        str_Status_Progress.Text = "0%"
+        str_Status_Task.Text = "waiting..."
     End Sub
 
     Private Sub startADBserver()
@@ -589,11 +594,12 @@ Public Class frm_Main
 
         todo = playlistToRemove.Tracks.Count + playlistToAdd.Tracks.Count
 
-        bgw_syncFiles.ReportProgress(progressPercentage, "Removing old files...")
-        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Removing old files..."))
+        bgw_syncFiles.ReportProgress(progressPercentage, "Removing old tracks...")
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Removing old tracks..."))
         For Each track In playlistToRemove.Tracks
-            bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Deleting...", Nothing, track.PathRemote))
+            bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Removing track (" & done + 1 & " / " & todo & ")...", Nothing, track.PathRemote))
             ' ToDo: Delete file, cover and empty parent dirs
+            selectedDevice.deleteFile(track.PathRemote)
 
             playlistRemoved.Tracks.Add(track)
             done += 1
@@ -602,51 +608,46 @@ Public Class frm_Main
             If (bgw_syncFiles.CancellationPending = True) Then
                 e.Cancel = True
                 bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync canceled by user"))
-
-                cleanup()
-                playlistRemoved.write_m3u8()
                 Exit Sub
             End If
         Next
 
-        bgw_syncFiles.ReportProgress(progressPercentage, "Adding new files...")
-        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Adding new files..."))
+        bgw_syncFiles.ReportProgress(progressPercentage, "Adding new tracks...")
+        bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Adding new tracks..."))
         playlistToAdd.generateRemotePath(preset)
         For Each track In playlistToAdd.Tracks
             Application.DoEvents()
 
             If (preset.ConvertFlag = True) Then
-                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Converting...", track.PathLocal, Nothing))
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Converting track (" & done + 1 & " / " & todo & ")...", track.PathLocal, Nothing))
                 track.convert(preset)
 
-                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading...", track.PathLocal, track.PathRemote))
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading track (" & done + 1 & " / " & todo & ")...", track.PathLocal, track.PathRemote))
                 selectedDevice.upload(track.PathLocalTemp, track.PathRemote)
 
                 cleanup()
             Else
-                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading...", track.PathLocal, track.PathRemote))
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading track (" & done + 1 & " / " & todo & ")...", track.PathLocal, track.PathRemote))
                 selectedDevice.upload(track.PathLocal, track.PathRemote)
             End If
-            ' ToDo: upload cover
 
-            playlistAdded.Tracks.Add(track)
+            If (track.HasCover = True) Then
+                If (selectedDevice.fileExists(track.CoverFile.Replace(preset.BasePath_Local, preset.BasePath_Remote).Replace("\", "/")) = False) Then
+                    bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading cover (" & done + 1 & " / " & todo & ")...", track.CoverFile, track.CoverFile.Replace(preset.BasePath_Local, preset.BasePath_Remote).Replace("\", "/")))
+                    selectedDevice.upload(track.CoverFile, track.CoverFile.Replace(preset.BasePath_Local, preset.BasePath_Remote).Replace("\", "/"))
+                End If
+            End If
+
+                playlistAdded.Tracks.Add(track)
             done += 1
             progressPercentage = done * 100 / todo
 
             If (bgw_syncFiles.CancellationPending = True) Then
                 e.Cancel = True
                 bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync canceled by user"))
-
-                cleanup()
-                playlistRemoved.write_m3u8()
-                playlistAdded.write_m3u8()
                 Exit Sub
             End If
         Next
-
-        cleanup()
-        playlistRemoved.write_m3u8()
-        playlistAdded.write_m3u8()
 
         bgw_syncFiles.ReportProgress(progressPercentage, "Sync files finished")
         bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Sync files finished"))
@@ -662,6 +663,13 @@ Public Class frm_Main
                 str_Status_Task.Text = e.UserState
         End Select
 
+        selectedDevice.refreshCapacity()
+        MyProgressBar1.myText = String.Format("{0} GiB used of {1} GiB ({2} GiB / {3}% free)", Math.Round(selectedDevice.CapacityUsed / 1024 / 1024, 2), Math.Round(selectedDevice.Capacity / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree * 100 / selectedDevice.Capacity, 2))
+        MyProgressBar1.myValue = Math.Round(selectedDevice.CapacityUsed * 100 / selectedDevice.Capacity, 0)
+
+        prg_ProgressSync.myText = "Progress: " & e.ProgressPercentage & "%"
+        prg_ProgressSync.myValue = e.ProgressPercentage
+
         dgv_syncFiles_Log.AutoResizeColumns(DataGridViewAutoSizeColumnMode.AllCells)
         dgv_syncFiles_Log.FirstDisplayedScrollingRowIndex = dgv_syncFiles_Log.RowCount - 1
     End Sub
@@ -671,6 +679,9 @@ Public Class frm_Main
         btn_syncFiles_CancelSync.Text = "cancel Sync"
 
         log.Close()
+        cleanup()
+        If playlistRemoved.Tracks.Count > 0 Then playlistRemoved.write_m3u8()
+        If playlistAdded.Tracks.Count > 0 Then playlistAdded.write_m3u8()
 
         grp_Devices.Enabled = True
         grp_syncFiles_Settings.Enabled = True

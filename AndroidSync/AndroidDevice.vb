@@ -98,13 +98,10 @@ Public Class AndroidDevice
         Dim fields() As String
         Dim findReturnsSize As Boolean = True
 
-        ' including folder.jpg
-        'Dim output As String = executeCommand("find /sdcard/Music/ -type f -name *.mp3 -or -name *.jpg -printf ""%p|%s\n""")
-        ' excluding folder.jpg
-        Dim output As String = executeCommand("find " & path & "/ -type f -name *.mp3 -printf ""%p|%s\n""")
+        Dim output As String = executeCommand("find """ & path & "/"" -type f -iname *.mp3 -printf ""%p|%s\n""")
 
         If (output = "find: bad arg '-printf'" & vbCrLf) Then
-            output = executeCommand("find " & path & "/ -type f -name *.mp3")
+            output = executeCommand("find """ & path & "/"" -type f -iname *.mp3")
             findReturnsSize = False
         End If
 
@@ -115,15 +112,37 @@ Public Class AndroidDevice
             For Each line In lines
                 fields = line.Split({"|"}, StringSplitOptions.RemoveEmptyEntries)
 
-                retval.Tracks.add(New Track(PathRemote:=fields(0), SizeRemote:=fields(1)))
+                retval.Tracks.Add(New Track(PathRemote:=fields(0), SizeRemote:=fields(1)))
             Next
         Else
             For Each line In lines
-                retval.Tracks.add(New Track(PathRemote:=line, SizeRemote:=0))
+                retval.Tracks.Add(New Track(PathRemote:=line, SizeRemote:=0))
             Next
         End If
 
         Return retval
+    End Function
+
+    Public Function getFilesInPath(path As String, filename As String) As List(Of String)
+        Dim retval As New List(Of String)
+
+        Dim output As String = executeCommand("find """ & path & "/"" -type f -iname """ & filename & """ -maxdepth 1")
+        retval = output.Split(ControlChars.CrLf.ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList
+
+        Return retval
+    End Function
+
+    Public Function getDirsInPath(path As String) As List(Of String)
+        Dim retval As New List(Of String)
+
+        Dim output As String = executeCommand("find """ & path & "/"" -type d -maxdepth 1")
+        retval = output.Split(ControlChars.CrLf.ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList
+
+        Return retval
+    End Function
+
+    Public Function fileExists(fullpath As String) As Boolean
+        Return executeCommand("[ -f """ & fullpath & """ ] && echo ""1"" || echo ""0""") '.Replace(vbCrLf, "")
     End Function
 
     Public Sub upload(fromFile As String, toFile As String)
@@ -145,6 +164,8 @@ Public Class AndroidDevice
 
             upload(fromFile, toPath & "/FilenameTooLong.mp3")
 
+            ' ToDo: implement check for other FilenameTooLong_xxxx.txt in directory
+
             ' create text file containing full (too long) file name
             Dim file As System.IO.StreamWriter
             file = My.Computer.FileSystem.OpenTextFileWriter(My.Application.Info.DirectoryPath & "\tmp\FilenameTooLong.txt", False, System.Text.Encoding.GetEncoding("iso-8859-1"))
@@ -163,5 +184,21 @@ Public Class AndroidDevice
 
         syncService.Pull(fromFile, stream, Nothing, Threading.CancellationToken.None)
         stream.Close()
+    End Sub
+
+    Public Sub deleteFile(fullpath As String)
+        ' ToDo: react to FilenameTooLong_xxxx.txt
+
+        ' delete file itself
+        executeCommand("rm -f """ & fullpath & """")
+
+        deleteDirIfEmpty(My.Computer.FileSystem.GetParentPath(fullpath).Replace("\", "/"))
+    End Sub
+
+    Private Sub deleteDirIfEmpty(path As String)
+        If (getFilesInPath(path, "*.mp3").Count = 0 AndAlso getDirsInPath(path).Count = 1) Then
+            executeCommand("rm -fr """ & path & """")
+            deleteDirIfEmpty(My.Computer.FileSystem.GetParentPath(path).Replace("\", "/"))
+        End If
     End Sub
 End Class
