@@ -141,6 +141,10 @@ Public Class frm_Main
         If (My.Computer.FileSystem.FileExists(My.Application.Info.DirectoryPath + "\tmp\converted.mp3") = True) Then
             My.Computer.FileSystem.DeleteFile(My.Application.Info.DirectoryPath + "\tmp\converted.mp3")
         End If
+
+        For Each playlist In IO.Directory.GetFiles(My.Application.Info.DirectoryPath + "\tmp\", "*.m3u8")
+            IO.File.Delete(playlist)
+        Next
     End Sub
 
     Private Sub prepareForm()
@@ -233,6 +237,18 @@ Public Class frm_Main
         col_syncFiles_Log_toFile.DataPropertyName = "toFile"
         col_syncFiles_Log_toFile.Name = "remote file"
 
+        Dim col_syncFiles_Log_fromSize As New DataGridViewTextBoxColumn()
+        col_syncFiles_Log_fromSize.DataPropertyName = "fromSizeMB"
+        col_syncFiles_Log_fromSize.Name = "local Size (MiB)"
+        col_syncFiles_Log_fromSize.DefaultCellStyle.Alignment = ContentAlignment.MiddleRight
+        col_syncFiles_Log_fromSize.DefaultCellStyle.Format = "#,##0.00"
+
+        Dim col_syncFiles_Log_toSize As New DataGridViewTextBoxColumn()
+        col_syncFiles_Log_toSize.DataPropertyName = "toSizeMB"
+        col_syncFiles_Log_toSize.Name = "remote Size (MiB)"
+        col_syncFiles_Log_toSize.DefaultCellStyle.Alignment = ContentAlignment.MiddleRight
+        col_syncFiles_Log_toSize.DefaultCellStyle.Format = "#,##0.00"
+
         With dgv_syncFiles_Log
             .AllowUserToAddRows = False
             .AllowUserToDeleteRows = False
@@ -248,6 +264,8 @@ Public Class frm_Main
             .Columns.Add(col_syncFiles_Log_Message)
             .Columns.Add(col_syncFiles_Log_fromFile)
             .Columns.Add(col_syncFiles_Log_toFile)
+            .Columns.Add(col_syncFiles_Log_fromSize)
+            .Columns.Add(col_syncFiles_Log_toSize)
 
             .DataSource = bs_syncFiles_Log
         End With
@@ -530,6 +548,11 @@ Public Class frm_Main
         Dim progressPercentage As Integer = 0
         Dim playlists As List(Of Playlist) = e.Argument
 
+        If playlists Is Nothing Then
+            bgw_readPreset.ReportProgress(progressPercentage, "Done")
+            Exit Sub
+        End If
+
         For Each playlist In playlists
             bgw_readPreset.ReportProgress(progressPercentage, "Reading " & playlist.Filename & "...")
             playlist.Read()
@@ -622,12 +645,12 @@ Public Class frm_Main
                 bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Converting track (" & done + 1 & " / " & todo & ")...", track.PathLocal, Nothing))
                 track.convert(preset)
 
-                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading track (" & done + 1 & " / " & todo & ")...", track.PathLocal, track.PathRemote))
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading track (" & done + 1 & " / " & todo & ")...", track.PathLocal, track.PathRemote, track.SizeLocal, track.SizeRemote))
                 selectedDevice.upload(track.PathLocalTemp, track.PathRemote)
 
                 cleanup()
             Else
-                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading track (" & done + 1 & " / " & todo & ")...", track.PathLocal, track.PathRemote))
+                bgw_syncFiles.ReportProgress(progressPercentage, New LogEntry(LogEntry.LogEntryType.INFO, "Uploading track (" & done + 1 & " / " & todo & ")...", track.PathLocal, track.PathRemote, track.SizeLocal, track.SizeRemote))
                 selectedDevice.upload(track.PathLocal, track.PathRemote)
             End If
 
@@ -678,16 +701,43 @@ Public Class frm_Main
         str_Status_Task.Text = "Done"
         btn_syncFiles_CancelSync.Text = "cancel Sync"
 
-        log.Close()
-        cleanup()
+
+
         If playlistRemoved.Tracks.Count > 0 Then playlistRemoved.write_m3u8()
-        If playlistAdded.Tracks.Count > 0 Then playlistAdded.write_m3u8()
+        If playlistAdded.Tracks.Count > 0 Then
+            playlistAdded.write_m3u8()
+
+            bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.INFO, "Creating playlist with added tracks...", Nothing, Nothing))
+            Dim playlistAddedRemote As New Playlist()
+            Dim filename As String = IO.Path.GetFileName(playlistAdded.Filename)
+            playlistAddedRemote = playlistAdded
+            playlistAddedRemote.Filename = My.Application.Info.DirectoryPath & "\tmp\" & filename
+            playlistAddedRemote.prepare_RemotePlaylist()
+
+            bs_syncFiles_Log.Add(New LogEntry(LogEntry.LogEntryType.INFO, "Uploading playlist with added tracks...", playlistAddedRemote.Filename, preset.BasePath_Remote & "/" & filename))
+            selectedDevice.upload(playlistAddedRemote.Filename, preset.BasePath_Remote & "/" & filename)
+            dgv_syncFiles_Log.AutoResizeColumns(DataGridViewAutoSizeColumnMode.AllCells)
+            dgv_syncFiles_Log.FirstDisplayedScrollingRowIndex = dgv_syncFiles_Log.RowCount - 1
+        End If
 
         grp_Devices.Enabled = True
         grp_syncFiles_Settings.Enabled = True
         grp_syncFiles_Playlists.Enabled = True
         btn_syncFiles_StartSync.Enabled = True
         btn_syncFiles_CancelSync.Enabled = False
+
+        ' TODO show summary
+        Dim fromSizes As Integer = 0
+        Dim toSizes As Integer = 0
+        For Each logEntry In log.LogEntries
+            fromSizes += logEntry.FromSize
+            toSizes += logEntry.Tosize
+        Next
+
+        MsgBox("Added files, original sizes " & (fromSizes / 1024 / 1024).ToString("#,##0.00") & " MB, converted to " & (toSizes / 1024 / 1024).ToString("#,##0.00") & " MB", MsgBoxStyle.OkOnly, "Sync finished")
+
+        log.Close()
+        cleanup()
     End Sub
 #End Region
 #End Region

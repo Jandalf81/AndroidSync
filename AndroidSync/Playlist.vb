@@ -86,6 +86,21 @@ Public Class Playlist
         file.Dispose()
     End Sub
 
+    Public Sub prepare_RemotePlaylist()
+        Dim content As String = ""
+
+        For Each track In Me._tracks
+            content += track.PathRemote & vbCrLf
+        Next
+
+        Dim file As System.IO.StreamWriter
+        file = My.Computer.FileSystem.OpenTextFileWriter(Me._filename, False)
+        file.Write(content)
+
+        file.Close()
+        file.Dispose()
+    End Sub
+
     Public Enum compareMode
         pathLocal = 0
         pathRemote = 1

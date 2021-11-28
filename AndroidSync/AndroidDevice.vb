@@ -142,7 +142,8 @@ Public Class AndroidDevice
     End Function
 
     Public Function fileExists(fullpath As String) As Boolean
-        Return executeCommand("[ -f """ & fullpath & """ ] && echo ""1"" || echo ""0""") '.Replace(vbCrLf, "")
+        Dim retval As String = executeCommand("[ -f """ & fullpath & """ ] && echo ""1"" || echo ""0""") '.Replace(vbCrLf, "")
+        Return retval
     End Function
 
     Public Sub upload(fromFile As String, toFile As String)

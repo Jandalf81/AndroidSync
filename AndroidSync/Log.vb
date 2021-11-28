@@ -39,6 +39,6 @@
     End Sub
 
     Private Sub writeEntryToFile(logEntry As LogEntry)
-        _file.WriteLine(logEntry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") & "|" & logEntry.Type.ToString() & "|" & logEntry.Message & "|" & logEntry.FromFile & "|" & logEntry.ToFile & "|" & logEntry.FromRating & "|" & logEntry.ToRating)
+        _file.WriteLine(logEntry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") & "|" & logEntry.Type.ToString() & "|" & logEntry.Message & "|" & logEntry.FromFile & "|" & logEntry.ToFile & "|" & logEntry.FromSize & "|" & logEntry.Tosize & "|" & logEntry.FromRating & "|" & logEntry.ToRating)
     End Sub
 End Class
