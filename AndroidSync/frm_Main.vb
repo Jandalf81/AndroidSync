@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel
+Imports System.Numerics
 Imports SharpAdbClient
 
 Public Class frm_Main
@@ -29,6 +30,11 @@ Public Class frm_Main
     }
 
     Public WithEvents bgw_syncFiles As New System.ComponentModel.BackgroundWorker() With {
+        .WorkerReportsProgress = True,
+        .WorkerSupportsCancellation = True
+    }
+
+    Public WithEvents bgw_syncRatings As New System.ComponentModel.BackgroundWorker() With {
         .WorkerReportsProgress = True,
         .WorkerSupportsCancellation = True
     }
@@ -359,6 +365,7 @@ Public Class frm_Main
         preset.Load(selectedDevice.Model + "_" + selectedDevice.Serial)
         txt_syncFiles_basePath_Local.Text = preset.BasePath_Local
         txt_syncFiles_basePath_Remote.Text = preset.BasePath_Remote
+        txt_syncRatings_basePath_Remote.Text = preset.BasePathRating_Remote
         chk_syncFiles_Convert.Checked = preset.ConvertFlag
         txt_syncFiles_LAMEOptions.Text = preset.ConvertString
         bs_Playlists.DataSource = preset.Playlists
@@ -399,6 +406,10 @@ Public Class frm_Main
 
     Private Sub txt_syncFiles_basePathRemote_TextChanged(sender As Object, e As EventArgs) Handles txt_syncFiles_basePath_Remote.TextChanged
         preset.BasePath_Remote = txt_syncFiles_basePath_Remote.Text
+    End Sub
+
+    Private Sub txt_syncFiles_basePathRatingRemote_TextChanged(sender As Object, e As EventArgs) Handles txt_syncRatings_basePath_Remote.TextChanged
+        preset.BasePathRating_Remote = txt_syncRatings_basePath_Remote.Text
     End Sub
 
     Private Sub btn_syncFiles_basePath_Local_Click(sender As Object, e As EventArgs) Handles btn_syncFiles_basePath_Local.Click
@@ -661,7 +672,7 @@ Public Class frm_Main
                 End If
             End If
 
-                playlistAdded.Tracks.Add(track)
+            playlistAdded.Tracks.Add(track)
             done += 1
             progressPercentage = done * 100 / todo
 
@@ -727,8 +738,8 @@ Public Class frm_Main
         btn_syncFiles_CancelSync.Enabled = False
 
         ' TODO show summary
-        Dim fromSizes As Integer = 0
-        Dim toSizes As Integer = 0
+        Dim fromSizes As BigInteger = 0
+        Dim toSizes As BigInteger = 0
         For Each logEntry In log.LogEntries
             fromSizes += logEntry.FromSize
             toSizes += logEntry.Tosize
@@ -739,6 +750,18 @@ Public Class frm_Main
         log.Close()
         cleanup()
     End Sub
+
+    Private Sub btn_syncRatings_StartSync_Click(sender As Object, e As EventArgs) Handles btn_syncRatings_StartSync.Click
+        bgw_syncRatings.RunWorkerAsync()
+    End Sub
+
+    Private Sub bgw_syncRatings_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles bgw_syncRatings.DoWork
+        Dim remotePlayList As Playlist
+
+        remotePlayList = selectedDevice.getRatings()
+        remotePlayList.generateLocalRatingPath(preset)
+    End Sub
+
 #End Region
 #End Region
 End Class

@@ -74,7 +74,7 @@ Public Class AndroidDevice
     Public Function executeCommand(command As String) As String
         Dim receiver As New ConsoleOutputReceiver()
 
-        ADBclient.ExecuteRemoteCommand(command, Me, receiver)
+        ADBclient.ExecuteRemoteCommand(command, Me, receiver, System.Text.Encoding.UTF8)
         Return receiver.ToString()
     End Function
 
@@ -123,6 +123,36 @@ Public Class AndroidDevice
         Return retval
     End Function
 
+    Public Function getRatings() As Playlist
+        Dim retVal As New Playlist()
+        Dim output As String
+        Dim lines() As String
+
+        Dim _id As Integer
+        Dim path As String
+        Dim name As String
+        Dim rating As Integer
+
+        Dim tmp As String
+
+        output = executeCommand("content query --uri content://com.maxmpz.audioplayer.data/files --projection folder_files._id:folders.path:folder_files.name:folder_files.rating")
+        lines = output.Split(ControlChars.CrLf.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+
+        For Each line In lines
+            Dim newTrack As New Track()
+
+            _id = CInt(System.Text.RegularExpressions.Regex.Match(line, "_id=(?'_id'\d*?), path=", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups("_id").Value)
+            path = System.Text.RegularExpressions.Regex.Match(line, ", path=(?'path'.*?), name=", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups("path").Value
+            name = System.Text.RegularExpressions.Regex.Match(line, ", name=(?'name'.*?), rating=", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups("name").Value
+            rating = CInt(System.Text.RegularExpressions.Regex.Match(line, ", rating=(?'rating'\d)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups("rating").Value)
+
+            newTrack.PathRemote = path + name
+            newTrack.RatingRemote = rating
+
+            retVal.Tracks.Add(newTrack)
+        Next
+    End Function
+
     Public Function getFilesInPath(path As String, filename As String) As List(Of String)
         Dim retval As New List(Of String)
 
@@ -142,8 +172,13 @@ Public Class AndroidDevice
     End Function
 
     Public Function fileExists(fullpath As String) As Boolean
-        Dim retval As String = executeCommand("[ -f """ & fullpath & """ ] && echo ""1"" || echo ""0""") '.Replace(vbCrLf, "")
-        Return retval
+        Try
+            ' TODO make this work with german umlauts or Unicode
+            Dim retval As String = executeCommand("[ -f """ & fullpath & """ ] && echo ""1"" || echo ""0""") '.Replace(vbCrLf, "")
+            Return retval
+        Catch ex As System.InvalidCastException
+            Return False
+        End Try
     End Function
 
     Public Sub upload(fromFile As String, toFile As String)

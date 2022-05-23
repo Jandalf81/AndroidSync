@@ -155,4 +155,10 @@ Public Class Playlist
             track.generateLocalPath(preset)
         Next
     End Sub
+
+    Public Sub generateLocalRatingPath(preset As Preset)
+        For Each track In _tracks
+            track.generateLocalRatingPath(preset)
+        Next
+    End Sub
 End Class

@@ -22,17 +22,17 @@ Partial Class frm_Main
     'Das Bearbeiten mit dem Code-Editor ist nicht möglich.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim Stack2 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
-        Dim Stack3 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
-        Dim Stack4 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
-        Dim Stack5 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
-        Dim Stack1 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
+        Dim Stack6 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
+        Dim DataGridViewCellStyle7 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle8 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle9 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle10 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle11 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle12 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim Stack7 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
+        Dim Stack8 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
+        Dim Stack9 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
+        Dim Stack10 As WindowsControlLibrary1.Stack = New WindowsControlLibrary1.Stack()
         Me.str_Status = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.str_Status_ADBserver = New System.Windows.Forms.ToolStripStatusLabel()
@@ -50,6 +50,7 @@ Partial Class frm_Main
         Me.dgv_Devices = New System.Windows.Forms.DataGridView()
         Me.tab_Control = New System.Windows.Forms.TabControl()
         Me.tab_syncFiles_SettingsPlaylists = New System.Windows.Forms.TabPage()
+        Me.prg_ProgressSync = New WindowsControlLibrary1.myProgressBar()
         Me.btn_syncFiles_CancelSync = New System.Windows.Forms.Button()
         Me.btn_syncFiles_StartSync = New System.Windows.Forms.Button()
         Me.dgv_syncFiles_Log = New System.Windows.Forms.DataGridView()
@@ -62,7 +63,7 @@ Partial Class frm_Main
         Me.btn_syncFiles_basePath_Local = New System.Windows.Forms.Button()
         Me.txt_syncFiles_basePath_Remote = New System.Windows.Forms.TextBox()
         Me.txt_syncFiles_basePath_Local = New System.Windows.Forms.TextBox()
-        Me.lbl_syncFiles_bastPath_Remote = New System.Windows.Forms.Label()
+        Me.lbl_syncFiles_basePath_Remote = New System.Windows.Forms.Label()
         Me.lbl_syncFiles_basePath_Local = New System.Windows.Forms.Label()
         Me.grp_syncFiles_Playlists = New System.Windows.Forms.GroupBox()
         Me.table_syncFiles_Playlists_Buttons = New System.Windows.Forms.TableLayoutPanel()
@@ -70,6 +71,10 @@ Partial Class frm_Main
         Me.btn_syncFiles_Playlists_Remove = New System.Windows.Forms.Button()
         Me.dgv_Playlists = New System.Windows.Forms.DataGridView()
         Me.tab_syncRatings = New System.Windows.Forms.TabPage()
+        Me.grp_syncRatings_Settings = New System.Windows.Forms.GroupBox()
+        Me.txt_syncRatings_basePath_Remote = New System.Windows.Forms.TextBox()
+        Me.lbl_syncRatings_basePath_Remote = New System.Windows.Forms.Label()
+        Me.btn_syncRatings_StartSync = New System.Windows.Forms.Button()
         Me.grp_selectedDevice = New System.Windows.Forms.GroupBox()
         Me.chk_hasPreset = New System.Windows.Forms.CheckBox()
         Me.txt_ModelNameProductSerial = New System.Windows.Forms.TextBox()
@@ -77,7 +82,6 @@ Partial Class frm_Main
         Me.MyProgressBar1 = New WindowsControlLibrary1.myProgressBar()
         Me.lbl_DiskSpace = New System.Windows.Forms.Label()
         Me.PoC_btn_uploadFile = New System.Windows.Forms.Button()
-        Me.prg_ProgressSync = New WindowsControlLibrary1.myProgressBar()
         Me.str_Status.SuspendLayout()
         Me.grp_Devices.SuspendLayout()
         CType(Me.dgv_Devices, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -89,6 +93,8 @@ Partial Class frm_Main
         Me.grp_syncFiles_Playlists.SuspendLayout()
         Me.table_syncFiles_Playlists_Buttons.SuspendLayout()
         CType(Me.dgv_Playlists, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.tab_syncRatings.SuspendLayout()
+        Me.grp_syncRatings_Settings.SuspendLayout()
         Me.grp_selectedDevice.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -249,6 +255,20 @@ Partial Class frm_Main
         Me.tab_syncFiles_SettingsPlaylists.TabIndex = 0
         Me.tab_syncFiles_SettingsPlaylists.Text = "sync Files"
         '
+        'prg_ProgressSync
+        '
+        Me.prg_ProgressSync.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.prg_ProgressSync.BackColor = System.Drawing.SystemColors.Control
+        Me.prg_ProgressSync.Location = New System.Drawing.Point(3, 267)
+        Me.prg_ProgressSync.MinimumSize = New System.Drawing.Size(100, 20)
+        Me.prg_ProgressSync.Name = "prg_ProgressSync"
+        Me.prg_ProgressSync.Size = New System.Drawing.Size(1117, 20)
+        Stack6.Color = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Stack6.MaxValue = 100
+        Me.prg_ProgressSync.stacks.Add(Stack6)
+        Me.prg_ProgressSync.TabIndex = 6
+        '
         'btn_syncFiles_CancelSync
         '
         Me.btn_syncFiles_CancelSync.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
@@ -272,7 +292,7 @@ Partial Class frm_Main
         Me.btn_syncFiles_StartSync.Name = "btn_syncFiles_StartSync"
         Me.btn_syncFiles_StartSync.Size = New System.Drawing.Size(946, 47)
         Me.btn_syncFiles_StartSync.TabIndex = 2
-        Me.btn_syncFiles_StartSync.Text = "start Sync"
+        Me.btn_syncFiles_StartSync.Text = "Start File Sync"
         Me.btn_syncFiles_StartSync.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
         Me.btn_syncFiles_StartSync.UseVisualStyleBackColor = True
         '
@@ -281,33 +301,33 @@ Partial Class frm_Main
         Me.dgv_syncFiles_Log.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgv_syncFiles_Log.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle7.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgv_syncFiles_Log.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle7
         Me.dgv_syncFiles_Log.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgv_syncFiles_Log.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle8.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgv_syncFiles_Log.DefaultCellStyle = DataGridViewCellStyle8
         Me.dgv_syncFiles_Log.Location = New System.Drawing.Point(3, 293)
         Me.dgv_syncFiles_Log.Name = "dgv_syncFiles_Log"
-        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgv_syncFiles_Log.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle9.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgv_syncFiles_Log.RowHeadersDefaultCellStyle = DataGridViewCellStyle9
         Me.dgv_syncFiles_Log.Size = New System.Drawing.Size(1126, 177)
         Me.dgv_syncFiles_Log.TabIndex = 1
         '
@@ -336,7 +356,7 @@ Partial Class frm_Main
         Me.grp_syncFiles_Settings.Controls.Add(Me.btn_syncFiles_basePath_Local)
         Me.grp_syncFiles_Settings.Controls.Add(Me.txt_syncFiles_basePath_Remote)
         Me.grp_syncFiles_Settings.Controls.Add(Me.txt_syncFiles_basePath_Local)
-        Me.grp_syncFiles_Settings.Controls.Add(Me.lbl_syncFiles_bastPath_Remote)
+        Me.grp_syncFiles_Settings.Controls.Add(Me.lbl_syncFiles_basePath_Remote)
         Me.grp_syncFiles_Settings.Controls.Add(Me.lbl_syncFiles_basePath_Local)
         Me.grp_syncFiles_Settings.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grp_syncFiles_Settings.Location = New System.Drawing.Point(6, 6)
@@ -420,14 +440,14 @@ Partial Class frm_Main
         Me.txt_syncFiles_basePath_Local.Size = New System.Drawing.Size(375, 20)
         Me.txt_syncFiles_basePath_Local.TabIndex = 2
         '
-        'lbl_syncFiles_bastPath_Remote
+        'lbl_syncFiles_basePath_Remote
         '
-        Me.lbl_syncFiles_bastPath_Remote.AutoSize = True
-        Me.lbl_syncFiles_bastPath_Remote.Location = New System.Drawing.Point(6, 45)
-        Me.lbl_syncFiles_bastPath_Remote.Name = "lbl_syncFiles_bastPath_Remote"
-        Me.lbl_syncFiles_bastPath_Remote.Size = New System.Drawing.Size(98, 13)
-        Me.lbl_syncFiles_bastPath_Remote.TabIndex = 1
-        Me.lbl_syncFiles_bastPath_Remote.Text = "base Path Remote:"
+        Me.lbl_syncFiles_basePath_Remote.AutoSize = True
+        Me.lbl_syncFiles_basePath_Remote.Location = New System.Drawing.Point(6, 45)
+        Me.lbl_syncFiles_basePath_Remote.Name = "lbl_syncFiles_basePath_Remote"
+        Me.lbl_syncFiles_basePath_Remote.Size = New System.Drawing.Size(98, 13)
+        Me.lbl_syncFiles_basePath_Remote.TabIndex = 1
+        Me.lbl_syncFiles_basePath_Remote.Text = "base Path Remote:"
         '
         'lbl_syncFiles_basePath_Local
         '
@@ -500,45 +520,88 @@ Partial Class frm_Main
         '
         Me.dgv_Playlists.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgv_Playlists.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle10.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgv_Playlists.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle10
         Me.dgv_Playlists.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgv_Playlists.DefaultCellStyle = DataGridViewCellStyle5
+        DataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle11.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgv_Playlists.DefaultCellStyle = DataGridViewCellStyle11
         Me.dgv_Playlists.Location = New System.Drawing.Point(6, 19)
         Me.dgv_Playlists.Name = "dgv_Playlists"
-        DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle6.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgv_Playlists.RowHeadersDefaultCellStyle = DataGridViewCellStyle6
+        DataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle12.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgv_Playlists.RowHeadersDefaultCellStyle = DataGridViewCellStyle12
         Me.dgv_Playlists.Size = New System.Drawing.Size(542, 127)
         Me.dgv_Playlists.TabIndex = 0
         '
         'tab_syncRatings
         '
         Me.tab_syncRatings.BackColor = System.Drawing.SystemColors.Control
+        Me.tab_syncRatings.Controls.Add(Me.grp_syncRatings_Settings)
+        Me.tab_syncRatings.Controls.Add(Me.btn_syncRatings_StartSync)
         Me.tab_syncRatings.Location = New System.Drawing.Point(4, 22)
         Me.tab_syncRatings.Name = "tab_syncRatings"
         Me.tab_syncRatings.Padding = New System.Windows.Forms.Padding(3)
         Me.tab_syncRatings.Size = New System.Drawing.Size(1132, 476)
         Me.tab_syncRatings.TabIndex = 1
         Me.tab_syncRatings.Text = "sync Ratings"
+        '
+        'grp_syncRatings_Settings
+        '
+        Me.grp_syncRatings_Settings.Controls.Add(Me.txt_syncRatings_basePath_Remote)
+        Me.grp_syncRatings_Settings.Controls.Add(Me.lbl_syncRatings_basePath_Remote)
+        Me.grp_syncRatings_Settings.Location = New System.Drawing.Point(9, 9)
+        Me.grp_syncRatings_Settings.Name = "grp_syncRatings_Settings"
+        Me.grp_syncRatings_Settings.Size = New System.Drawing.Size(1117, 48)
+        Me.grp_syncRatings_Settings.TabIndex = 1
+        Me.grp_syncRatings_Settings.TabStop = False
+        Me.grp_syncRatings_Settings.Text = "Settings"
+        '
+        'txt_syncRatings_basePath_Remote
+        '
+        Me.txt_syncRatings_basePath_Remote.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txt_syncRatings_basePath_Remote.Location = New System.Drawing.Point(110, 16)
+        Me.txt_syncRatings_basePath_Remote.Name = "txt_syncRatings_basePath_Remote"
+        Me.txt_syncRatings_basePath_Remote.Size = New System.Drawing.Size(355, 20)
+        Me.txt_syncRatings_basePath_Remote.TabIndex = 4
+        '
+        'lbl_syncRatings_basePath_Remote
+        '
+        Me.lbl_syncRatings_basePath_Remote.AutoSize = True
+        Me.lbl_syncRatings_basePath_Remote.Location = New System.Drawing.Point(6, 19)
+        Me.lbl_syncRatings_basePath_Remote.Name = "lbl_syncRatings_basePath_Remote"
+        Me.lbl_syncRatings_basePath_Remote.Size = New System.Drawing.Size(96, 13)
+        Me.lbl_syncRatings_basePath_Remote.TabIndex = 0
+        Me.lbl_syncRatings_basePath_Remote.Text = "Base Path Remote"
+        '
+        'btn_syncRatings_StartSync
+        '
+        Me.btn_syncRatings_StartSync.Image = Global.AndroidSync.My.Resources.Resources.accept
+        Me.btn_syncRatings_StartSync.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btn_syncRatings_StartSync.Location = New System.Drawing.Point(9, 63)
+        Me.btn_syncRatings_StartSync.Name = "btn_syncRatings_StartSync"
+        Me.btn_syncRatings_StartSync.Size = New System.Drawing.Size(940, 47)
+        Me.btn_syncRatings_StartSync.TabIndex = 0
+        Me.btn_syncRatings_StartSync.Text = "Start Ratings Sync"
+        Me.btn_syncRatings_StartSync.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.btn_syncRatings_StartSync.UseVisualStyleBackColor = True
         '
         'grp_selectedDevice
         '
@@ -596,18 +659,18 @@ Partial Class frm_Main
         Me.MyProgressBar1.MinimumSize = New System.Drawing.Size(100, 20)
         Me.MyProgressBar1.Name = "MyProgressBar1"
         Me.MyProgressBar1.Size = New System.Drawing.Size(996, 20)
-        Stack2.Color = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Stack2.MaxValue = 80
-        Stack3.Color = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(128, Byte), Integer))
-        Stack3.MaxValue = 90
-        Stack4.Color = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Stack4.MaxValue = 95
-        Stack5.Color = System.Drawing.Color.Red
-        Stack5.MaxValue = 100
-        Me.MyProgressBar1.stacks.Add(Stack2)
-        Me.MyProgressBar1.stacks.Add(Stack3)
-        Me.MyProgressBar1.stacks.Add(Stack4)
-        Me.MyProgressBar1.stacks.Add(Stack5)
+        Stack7.Color = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Stack7.MaxValue = 80
+        Stack8.Color = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(128, Byte), Integer))
+        Stack8.MaxValue = 90
+        Stack9.Color = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Stack9.MaxValue = 95
+        Stack10.Color = System.Drawing.Color.Red
+        Stack10.MaxValue = 100
+        Me.MyProgressBar1.stacks.Add(Stack7)
+        Me.MyProgressBar1.stacks.Add(Stack8)
+        Me.MyProgressBar1.stacks.Add(Stack9)
+        Me.MyProgressBar1.stacks.Add(Stack10)
         Me.MyProgressBar1.TabIndex = 5
         '
         'lbl_DiskSpace
@@ -628,20 +691,6 @@ Partial Class frm_Main
         Me.PoC_btn_uploadFile.TabIndex = 5
         Me.PoC_btn_uploadFile.Text = "PoC_uploadFile"
         Me.PoC_btn_uploadFile.UseVisualStyleBackColor = True
-        '
-        'prg_ProgressSync
-        '
-        Me.prg_ProgressSync.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.prg_ProgressSync.BackColor = System.Drawing.SystemColors.Control
-        Me.prg_ProgressSync.Location = New System.Drawing.Point(3, 267)
-        Me.prg_ProgressSync.MinimumSize = New System.Drawing.Size(100, 20)
-        Me.prg_ProgressSync.Name = "prg_ProgressSync"
-        Me.prg_ProgressSync.Size = New System.Drawing.Size(1117, 20)
-        Stack1.Color = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Stack1.MaxValue = 100
-        Me.prg_ProgressSync.stacks.Add(Stack1)
-        Me.prg_ProgressSync.TabIndex = 6
         '
         'frm_Main
         '
@@ -668,6 +717,9 @@ Partial Class frm_Main
         Me.grp_syncFiles_Playlists.ResumeLayout(False)
         Me.table_syncFiles_Playlists_Buttons.ResumeLayout(False)
         CType(Me.dgv_Playlists, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.tab_syncRatings.ResumeLayout(False)
+        Me.grp_syncRatings_Settings.ResumeLayout(False)
+        Me.grp_syncRatings_Settings.PerformLayout()
         Me.grp_selectedDevice.ResumeLayout(False)
         Me.grp_selectedDevice.PerformLayout()
         Me.ResumeLayout(False)
@@ -697,7 +749,7 @@ Partial Class frm_Main
     Friend WithEvents lbl_syncFiles_basePath_Local As Label
     Friend WithEvents txt_syncFiles_basePath_Remote As TextBox
     Friend WithEvents txt_syncFiles_basePath_Local As TextBox
-    Friend WithEvents lbl_syncFiles_bastPath_Remote As Label
+    Friend WithEvents lbl_syncFiles_basePath_Remote As Label
     Friend WithEvents txt_syncFiles_LAMEOptions As TextBox
     Friend WithEvents lbl_syncFiles_LAMEOptions As Label
     Friend WithEvents chk_syncFiles_Convert As CheckBox
@@ -719,4 +771,8 @@ Partial Class frm_Main
     Friend WithEvents ToolStripStatusLabel5 As ToolStripStatusLabel
     Friend WithEvents str_Status_LAME As ToolStripStatusLabel
     Friend WithEvents prg_ProgressSync As WindowsControlLibrary1.myProgressBar
+    Friend WithEvents btn_syncRatings_StartSync As Button
+    Friend WithEvents grp_syncRatings_Settings As GroupBox
+    Friend WithEvents lbl_syncRatings_basePath_Remote As Label
+    Friend WithEvents txt_syncRatings_basePath_Remote As TextBox
 End Class

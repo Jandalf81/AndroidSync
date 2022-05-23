@@ -2,8 +2,12 @@
     Private _pathLocal As String
     Private _pathLocalTemp As String
     Private _sizeLocal As Integer
+    Private _ratingLocal As Integer
+
     Private _pathRemote As String
     Private _sizeRemote As Integer
+    Private _ratingRemote As Integer
+
     Private _coverFile As String
 
     ' fields for the local file
@@ -40,6 +44,15 @@
         End Get
     End Property
 
+    Public Property RatingLocal As Integer
+        Get
+            Return _ratingLocal
+        End Get
+        Set(value As Integer)
+            Me._ratingLocal = value
+        End Set
+    End Property
+
     Public ReadOnly Property CoverFile As String
         Get
             Return _coverFile
@@ -56,10 +69,13 @@
     End Property
 
     ' fields for the remote file
-    Public ReadOnly Property PathRemote As String
+    Public Property PathRemote As String
         Get
             Return _pathRemote
         End Get
+        Set(value As String)
+            Me._pathRemote = value
+        End Set
     End Property
     Public ReadOnly Property ParentDirRemote As String
         Get
@@ -73,6 +89,14 @@
         End Get
     End Property
 
+    Public Property RatingRemote As Integer
+        Get
+            Return _ratingRemote
+        End Get
+        Set(value As Integer)
+            Me._ratingRemote = value
+        End Set
+    End Property
 
     Public Sub New()
     End Sub
@@ -96,7 +120,6 @@
         Me._pathRemote = PathRemote
         Me._sizeRemote = SizeRemote
     End Sub
-
 
     Public Sub generateRemotePath(preset As Preset)
         Me._pathRemote = Me._pathLocal.Replace(preset.BasePath_Local, preset.BasePath_Remote).Replace("\", "/")
@@ -133,4 +156,8 @@
 
         Return retval
     End Function
+
+    Public Sub generateLocalRatingPath(preset As Preset)
+        Me._pathLocal = Me._pathRemote.Replace(preset.BasePathRating_Remote, preset.BasePath_Local).Replace("/", "\")
+    End Sub
 End Class

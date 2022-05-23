@@ -1,6 +1,7 @@
 ﻿Public Class Preset
     Private _basePath_Local As String
     Private _basePath_Remote As String
+    Private _basePathRating_Remote As String
 
     Private _convertFlag As Boolean
     Private _convertString As String
@@ -21,6 +22,15 @@
         End Get
         Set(value As String)
             _basePath_Remote = value
+        End Set
+    End Property
+
+    Public Property BasePathRating_Remote As String
+        Get
+            Return _basePathRating_Remote
+        End Get
+        Set(value As String)
+            _basePathRating_Remote = value
         End Set
     End Property
 
@@ -73,6 +83,7 @@
 
             Me.BasePath_Local = IPreset.BasePath_Local
             Me.BasePath_Remote = IPreset.BasePath_Remote
+            Me.BasePathRating_Remote = IPreset.BasePathRating_Remote
             Me.ConvertFlag = IPreset.ConvertFlag
             Me.ConvertString = IPreset.ConvertString
             Me.Playlists = IPreset.Playlists
