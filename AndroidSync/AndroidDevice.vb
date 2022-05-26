@@ -151,6 +151,8 @@ Public Class AndroidDevice
 
             retVal.Tracks.Add(newTrack)
         Next
+
+        Return retVal
     End Function
 
     Public Function getFilesInPath(path As String, filename As String) As List(Of String)

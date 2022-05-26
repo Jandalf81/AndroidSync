@@ -12,12 +12,15 @@ Public Class frm_Main
     Public bs_Devices As New BindingSource()
     Public bs_Playlists As New BindingSource()
     Public bs_syncFiles_Log As New BindingSource()
+    Public bs_syncRatings_Log As New BindingSource()
 
     Public preset As New Preset()
 
     Public log As Log
     Public playlistRemoved As Playlist
     Public playlistAdded As Playlist
+
+    Public playlistRatings As Playlist
 
     Public WithEvents bgw_syncSingleTrack As New System.ComponentModel.BackgroundWorker() With {
         .WorkerReportsProgress = True,
@@ -218,8 +221,8 @@ Public Class frm_Main
 
         bs_Playlists.DataSource = preset.Playlists
 
-        prg_ProgressSync.myText = "Progress: 0%"
-        prg_ProgressSync.myValue = 0
+        prg_syncFiles_ProgressSync.myText = "Progress: 0%"
+        prg_syncFiles_ProgressSync.myValue = 0
 
         ' dgv_syncFiles_Log
         Dim col_syncFiles_Log_Timestamp As New DataGridViewTextBoxColumn()
@@ -275,6 +278,55 @@ Public Class frm_Main
 
             .DataSource = bs_syncFiles_Log
         End With
+
+        ' dgv_syncRatings_Log
+        Dim col_syncRatings_Log_PathLocal As New DataGridViewTextBoxColumn()
+        col_syncRatings_Log_PathLocal.DataPropertyName = "PathLocal"
+        col_syncRatings_Log_PathLocal.Name = "local Path"
+
+        Dim col_syncRatings_Log_PathRemote As New DataGridViewTextBoxColumn()
+        col_syncRatings_Log_PathRemote.DataPropertyName = "PathRemote"
+        col_syncRatings_Log_PathRemote.Name = "remote Path"
+
+        Dim col_syncRatings_Log_RatingLocal As New DataGridViewTextBoxColumn()
+        col_syncRatings_Log_RatingLocal.DataPropertyName = "RatingLocal"
+        col_syncRatings_Log_RatingLocal.Name = "local Rating"
+
+        Dim col_syncRatings_Log_RatingLocalImage As New DataGridViewImageColumn()
+        col_syncRatings_Log_RatingLocalImage.DataPropertyName = "RatingLocalImage"
+        col_syncRatings_Log_RatingLocalImage.Name = "local Rating"
+
+        Dim col_syncRatings_Log_RatingRemote As New DataGridViewTextBoxColumn()
+        col_syncRatings_Log_RatingRemote.DataPropertyName = "RatingRemote"
+        col_syncRatings_Log_RatingRemote.Name = "remote Rating"
+
+        Dim col_syncRatings_Log_RatingRemoteImage As New DataGridViewImageColumn()
+        col_syncRatings_Log_RatingRemoteImage.DataPropertyName = "RatingRemoteImage"
+        col_syncRatings_Log_RatingRemoteImage.Name = "remote Rating"
+
+
+        With dgv_syncRatings_Log
+            .ReadOnly = True
+            .AllowUserToAddRows = False
+            .AutoGenerateColumns = False
+            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+            .RowHeadersVisible = False
+
+            .Columns.Add(col_syncRatings_Log_PathLocal)
+            .Columns.Add(col_syncRatings_Log_RatingLocal)
+            .Columns.Add(col_syncRatings_Log_RatingLocalImage)
+            .Columns.Add(col_syncRatings_Log_RatingRemoteImage)
+            .Columns.Add(col_syncRatings_Log_RatingRemote)
+            .Columns.Add(col_syncRatings_Log_PathRemote)
+
+            .DataSource = bs_syncRatings_Log
+        End With
+
+        'bs_syncRatings_Log.DataSource = playlistRatings.Tracks
+
+        prg_syncRatings_ProgressSync.myText = "Progress: 0%"
+        prg_syncRatings_ProgressSync.myValue = 0
 
         ' Status Strip
         str_Status_ADBserver.Text = "waiting..."
@@ -701,8 +753,8 @@ Public Class frm_Main
         MyProgressBar1.myText = String.Format("{0} GiB used of {1} GiB ({2} GiB / {3}% free)", Math.Round(selectedDevice.CapacityUsed / 1024 / 1024, 2), Math.Round(selectedDevice.Capacity / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree / 1024 / 1024, 2), Math.Round(selectedDevice.CapacityFree * 100 / selectedDevice.Capacity, 2))
         MyProgressBar1.myValue = Math.Round(selectedDevice.CapacityUsed * 100 / selectedDevice.Capacity, 0)
 
-        prg_ProgressSync.myText = "Progress: " & e.ProgressPercentage & "%"
-        prg_ProgressSync.myValue = e.ProgressPercentage
+        prg_syncFiles_ProgressSync.myText = "Progress: " & e.ProgressPercentage & "%"
+        prg_syncFiles_ProgressSync.myValue = e.ProgressPercentage
 
         dgv_syncFiles_Log.AutoResizeColumns(DataGridViewAutoSizeColumnMode.AllCells)
         dgv_syncFiles_Log.FirstDisplayedScrollingRowIndex = dgv_syncFiles_Log.RowCount - 1
@@ -752,14 +804,47 @@ Public Class frm_Main
     End Sub
 
     Private Sub btn_syncRatings_StartSync_Click(sender As Object, e As EventArgs) Handles btn_syncRatings_StartSync.Click
+        playlistRatings = New Playlist()
+        bs_syncRatings_Log.DataSource = playlistRatings.Tracks
+        dgv_syncRatings_Log.DataSource = bs_syncRatings_Log
+
         bgw_syncRatings.RunWorkerAsync()
     End Sub
 
     Private Sub bgw_syncRatings_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles bgw_syncRatings.DoWork
-        Dim remotePlayList As Playlist
+        Dim remotePlayList As New Playlist
+        Dim progresspercentage As Integer = 0
+
+        bgw_syncRatings.ReportProgress(progresspercentage, "Getting tracks and ratings from device...")
 
         remotePlayList = selectedDevice.getRatings()
         remotePlayList.generateLocalRatingPath(preset)
+
+        For Each track In remotePlayList.Tracks
+            bgw_syncRatings.ReportProgress(progresspercentage, "Getting ratings from local files...")
+
+            track.readLocalRating()
+
+            If (track.RatingLocal <> track.RatingRemote) Then
+                bgw_syncRatings.ReportProgress(progresspercentage, track)
+            End If
+        Next
+    End Sub
+
+    Private Sub bgw_syncRatings_ProgressChanged(sender As Object, e As System.ComponentModel.ProgressChangedEventArgs) Handles bgw_syncRatings.ProgressChanged
+        Select Case e.UserState.GetType()
+            Case GetType(String)
+                str_Status_Task.Text = e.UserState
+            Case GetType(Track)
+                bs_syncRatings_Log.Add(e.UserState)
+                dgv_syncRatings_Log.AutoResizeColumns(DataGridViewAutoSizeColumnMode.AllCells)
+                dgv_syncRatings_Log.FirstDisplayedScrollingRowIndex = dgv_syncRatings_Log.RowCount - 1
+        End Select
+
+        prg_syncRatings_ProgressSync.myText = "Progress: " & e.ProgressPercentage & "%"
+        prg_syncRatings_ProgressSync.myValue = e.ProgressPercentage
+
+        Application.DoEvents()
     End Sub
 
 #End Region

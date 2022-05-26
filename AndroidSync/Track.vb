@@ -3,10 +3,12 @@
     Private _pathLocalTemp As String
     Private _sizeLocal As Integer
     Private _ratingLocal As Integer
+    Private _ratingLocalImage As Image
 
     Private _pathRemote As String
     Private _sizeRemote As Integer
     Private _ratingRemote As Integer
+    Private _ratingRemoteImage As Image
 
     Private _coverFile As String
 
@@ -50,6 +52,30 @@
         End Get
         Set(value As Integer)
             Me._ratingLocal = value
+
+            Select Case value
+                Case 0
+                    Me._ratingLocalImage = My.Resources.star_0
+                Case 1
+                    Me._ratingLocalImage = My.Resources.star_1
+                Case 2
+                    Me._ratingLocalImage = My.Resources.star_2
+                Case 3
+                    Me._ratingLocalImage = My.Resources.star_3
+                Case 4
+                    Me._ratingLocalImage = My.Resources.star_4
+                Case 5
+                    Me._ratingLocalImage = My.Resources.star_5
+            End Select
+        End Set
+    End Property
+
+    Public Property RatingLocalImage As Image
+        Get
+            Return _ratingLocalImage
+        End Get
+        Set(value As Image)
+            _ratingLocalImage = value
         End Set
     End Property
 
@@ -95,6 +121,30 @@
         End Get
         Set(value As Integer)
             Me._ratingRemote = value
+
+            Select Case value
+                Case 0
+                    Me._ratingRemoteImage = My.Resources.star_0
+                Case 1
+                    Me._ratingRemoteImage = My.Resources.star_1
+                Case 2
+                    Me._ratingRemoteImage = My.Resources.star_2
+                Case 3
+                    Me._ratingRemoteImage = My.Resources.star_3
+                Case 4
+                    Me._ratingRemoteImage = My.Resources.star_4
+                Case 5
+                    Me._ratingRemoteImage = My.Resources.star_5
+            End Select
+        End Set
+    End Property
+
+    Public Property RatingRemoteImage As Image
+        Get
+            Return _ratingRemoteImage
+        End Get
+        Set(value As Image)
+            Me._ratingRemoteImage = value
         End Set
     End Property
 
@@ -159,5 +209,66 @@
 
     Public Sub generateLocalRatingPath(preset As Preset)
         Me._pathLocal = Me._pathRemote.Replace(preset.BasePathRating_Remote, preset.BasePath_Local).Replace("/", "\")
+    End Sub
+
+    Public Sub readLocalRating()
+        TagLib.Id3v2.Tag.DefaultVersion = 3
+        TagLib.Id3v2.Tag.ForceDefaultVersion = True
+
+        If (My.Computer.FileSystem.FileExists(Me._pathLocal) = True) Then
+            If (IO.Path.GetExtension(Me._pathLocal) = ".mp3") Then
+                Dim mp3 As TagLib.File = TagLib.File.Create(Me._pathLocal)
+                Dim tag As TagLib.Tag = mp3.GetTag(TagLib.TagTypes.Id3v2)
+                Dim popm As TagLib.Id3v2.PopularimeterFrame = TagLib.Id3v2.PopularimeterFrame.Get(tag, "Windows Media Player 9 Series", True)
+
+                Select Case popm.Rating
+                    Case 0
+                        Me.RatingLocal = 0
+                    Case 1
+                        Me.RatingLocal = 1
+                    Case 64
+                        Me.RatingLocal = 2
+                    Case 128
+                        Me.RatingLocal = 3
+                    Case 196
+                        Me.RatingLocal = 4
+                    Case 255
+                        Me.RatingLocal = 5
+                End Select
+
+                mp3.Dispose()
+            End If
+        End If
+    End Sub
+
+    Public Sub writeLocalRating(newRating As Integer)
+        TagLib.Id3v2.Tag.DefaultVersion = 3
+        TagLib.Id3v2.Tag.ForceDefaultVersion = True
+
+        If (My.Computer.FileSystem.FileExists(Me._pathLocal) = True) Then
+            If (IO.Path.GetExtension(Me._pathLocal) = ".mp3") Then
+                Dim mp3 As TagLib.File = TagLib.File.Create(Me._pathLocal)
+                Dim tag As TagLib.Tag = mp3.GetTag(TagLib.TagTypes.Id3v2)
+                Dim popm As TagLib.Id3v2.PopularimeterFrame = TagLib.Id3v2.PopularimeterFrame.Get(tag, "Windows Media Player 9 Series", True)
+
+                Select Case newRating
+                    Case 0
+                        popm.Rating = 0
+                    Case 1
+                        popm.Rating = 1
+                    Case 2
+                        popm.Rating = 64
+                    Case 3
+                        popm.Rating = 128
+                    Case 4
+                        popm.Rating = 196
+                    Case 5
+                        popm.Rating = 255
+                End Select
+
+                mp3.Save()
+                mp3.Dispose()
+            End If
+        End If
     End Sub
 End Class
