@@ -133,9 +133,7 @@ Public Class AndroidDevice
         Dim name As String
         Dim rating As Integer
 
-        Dim tmp As String
-
-        output = executeCommand("content query --uri content://com.maxmpz.audioplayer.data/files --projection folder_files._id:folders.path:folder_files.name:folder_files.rating")
+        output = executeCommand("content query --uri content://com.maxmpz.audioplayer.data/files --projection folder_files._id:folders.path:folder_files.name:folder_files.rating --sort ""folders.path,folder_files.name""")
         lines = output.Split(ControlChars.CrLf.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
 
         For Each line In lines

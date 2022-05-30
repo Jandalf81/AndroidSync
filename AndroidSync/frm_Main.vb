@@ -21,6 +21,7 @@ Public Class frm_Main
     Public playlistAdded As Playlist
 
     Public playlistRatings As Playlist
+    Public filter As String = Nothing
 
     Public WithEvents bgw_syncSingleTrack As New System.ComponentModel.BackgroundWorker() With {
         .WorkerReportsProgress = True,
@@ -765,7 +766,6 @@ Public Class frm_Main
         btn_syncFiles_CancelSync.Text = "cancel Sync"
 
 
-
         If playlistRemoved.Tracks.Count > 0 Then playlistRemoved.write_m3u8()
         If playlistAdded.Tracks.Count > 0 Then
             playlistAdded.write_m3u8()
@@ -808,26 +808,59 @@ Public Class frm_Main
         bs_syncRatings_Log.DataSource = playlistRatings.Tracks
         dgv_syncRatings_Log.DataSource = bs_syncRatings_Log
 
+        If (txt_syncRatings_Filter_Path.Text = "") Then
+            filter = Nothing
+        Else
+            filter = txt_syncRatings_Filter_Path.Text
+        End If
+
         bgw_syncRatings.RunWorkerAsync()
     End Sub
 
     Private Sub bgw_syncRatings_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles bgw_syncRatings.DoWork
         Dim remotePlayList As New Playlist
-        Dim progresspercentage As Integer = 0
+        Dim toSyncPlaylist As New Playlist
+        Dim progressPercentage As Integer = 0
+        Dim done As Integer = 0
+        Dim todo As Integer = 0
 
-        bgw_syncRatings.ReportProgress(progresspercentage, "Getting tracks and ratings from device...")
+        bgw_syncRatings.ReportProgress(progressPercentage, "Getting tracks and ratings from device... ")
 
         remotePlayList = selectedDevice.getRatings()
         remotePlayList.generateLocalRatingPath(preset)
 
-        For Each track In remotePlayList.Tracks
-            bgw_syncRatings.ReportProgress(progresspercentage, "Getting ratings from local files...")
+        If (filter IsNot Nothing) Then
+            Dim newPlaylist As New Playlist
+            For Each track In remotePlayList.Tracks
+                If (track.PathLocal.Contains(filter)) Then
+                    newPlaylist.Tracks.Add(track)
+                End If
+            Next
+            remotePlayList = newPlaylist
+        End If
 
+        todo = remotePlayList.Tracks.Count
+
+        For Each track In remotePlayList.Tracks
+            If (bgw_syncRatings.CancellationPending = True) Then
+                e.Cancel = True
+                bgw_syncRatings.ReportProgress(progressPercentage, "Sync canceled by user")
+                Exit Sub
+            End If
+
+            done += 1
+            progressPercentage = (done * 100 / todo) / 2
+
+
+            bgw_syncRatings.ReportProgress(progressPercentage, "Getting ratings from local files... (" & done.ToString() & "/" & todo.ToString() & ")")
             track.readLocalRating()
 
             If (track.RatingLocal <> track.RatingRemote) Then
-                bgw_syncRatings.ReportProgress(progresspercentage, track)
+                bgw_syncRatings.ReportProgress(progressPercentage, track)
+                toSyncPlaylist.Tracks.Add(track)
             End If
+
+            Threading.Thread.Sleep(8)
         Next
     End Sub
 
@@ -841,10 +874,17 @@ Public Class frm_Main
                 dgv_syncRatings_Log.FirstDisplayedScrollingRowIndex = dgv_syncRatings_Log.RowCount - 1
         End Select
 
-        prg_syncRatings_ProgressSync.myText = "Progress: " & e.ProgressPercentage & "%"
+        prg_syncRatings_ProgressSync.myText = $"Progress: {e.ProgressPercentage}%"
         prg_syncRatings_ProgressSync.myValue = e.ProgressPercentage
 
+        str_Status_Progress.Text = e.ProgressPercentage & "%"
+
         Application.DoEvents()
+    End Sub
+
+    Private Sub btn_syncRatings_CancelSync_Click(sender As Object, e As EventArgs) Handles btn_syncRatings_CancelSync.Click
+        bgw_syncRatings.CancelAsync()
+        btn_syncRatings_CancelSync.Text = "Cancelling..."
     End Sub
 
 #End Region
