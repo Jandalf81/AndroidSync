@@ -94,7 +94,7 @@ Public Class frm_Main
         ADBclient.ExecuteRemoteCommand("rm /sdcard/direct.txt", device, receiver)
     End Sub
 
-    Private Sub PoC_btn_uploadFile_Click(sender As Object, e As EventArgs) Handles PoC_btn_uploadFile.Click
+    Private Sub PoC_btn_uploadFile_Click(sender As Object, e As EventArgs)
         Dim ofd As New OpenFileDialog()
         ofd.Multiselect = True
         Dim fromFiles() As String
@@ -183,6 +183,7 @@ Public Class frm_Main
         With dgv_Devices
             .ReadOnly = True
             .AllowUserToAddRows = False
+            .AllowUserToResizeRows = False
             .AutoGenerateColumns = False
             .SelectionMode = DataGridViewSelectionMode.FullRowSelect
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
@@ -209,6 +210,7 @@ Public Class frm_Main
         With dgv_Playlists
             .ReadOnly = True
             .AllowUserToAddRows = False
+            .AllowUserToResizeRows = False
             .AutoGenerateColumns = False
             .SelectionMode = DataGridViewSelectionMode.FullRowSelect
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
@@ -264,6 +266,7 @@ Public Class frm_Main
             .AllowUserToDeleteRows = False
             .AllowUserToOrderColumns = True
             .AllowUserToResizeColumns = True
+            .AllowUserToResizeRows = False
             .AutoGenerateColumns = False
             .ReadOnly = True
             .RowHeadersVisible = False
@@ -305,20 +308,26 @@ Public Class frm_Main
         col_syncRatings_Log_RatingRemoteImage.DataPropertyName = "RatingRemoteImage"
         col_syncRatings_Log_RatingRemoteImage.Name = "remote Rating"
 
+        Dim col_syncRatings_Log_SyncResult As New DataGridViewImageColumn()
+        col_syncRatings_Log_SyncResult.DataPropertyName = "SyncResultImage"
+        col_syncRatings_Log_SyncResult.Name = "Sync"
+
 
         With dgv_syncRatings_Log
             .ReadOnly = True
             .AllowUserToAddRows = False
+            .AllowUserToResizeRows = False
             .AutoGenerateColumns = False
             .SelectionMode = DataGridViewSelectionMode.FullRowSelect
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
             .RowHeadersVisible = False
 
             .Columns.Add(col_syncRatings_Log_PathLocal)
-            .Columns.Add(col_syncRatings_Log_RatingLocal)
+            '.Columns.Add(col_syncRatings_Log_RatingLocal)
             .Columns.Add(col_syncRatings_Log_RatingLocalImage)
+            .Columns.Add(col_syncRatings_Log_SyncResult)
             .Columns.Add(col_syncRatings_Log_RatingRemoteImage)
-            .Columns.Add(col_syncRatings_Log_RatingRemote)
+            '.Columns.Add(col_syncRatings_Log_RatingRemote)
             .Columns.Add(col_syncRatings_Log_PathRemote)
 
             .DataSource = bs_syncRatings_Log
@@ -814,6 +823,9 @@ Public Class frm_Main
             filter = txt_syncRatings_Filter_Path.Text
         End If
 
+        btn_syncRatings_StartSync.Enabled = False
+        ' TODO disable other GUI elements
+
         bgw_syncRatings.RunWorkerAsync()
     End Sub
 
@@ -829,7 +841,10 @@ Public Class frm_Main
         remotePlayList = selectedDevice.getRatings()
         remotePlayList.generateLocalRatingPath(preset)
 
+        ' filter playlist if set
         If (filter IsNot Nothing) Then
+            bgw_syncRatings.ReportProgress(progressPercentage, "Filtering tracks... ")
+
             Dim newPlaylist As New Playlist
             For Each track In remotePlayList.Tracks
                 If (track.PathLocal.Contains(filter)) Then
@@ -841,6 +856,7 @@ Public Class frm_Main
 
         todo = remotePlayList.Tracks.Count
 
+        ' get local rating for each track, add track to new playlist if ratings differ
         For Each track In remotePlayList.Tracks
             If (bgw_syncRatings.CancellationPending = True) Then
                 e.Cancel = True
@@ -850,7 +866,6 @@ Public Class frm_Main
 
             done += 1
             progressPercentage = (done * 100 / todo) / 2
-
 
             bgw_syncRatings.ReportProgress(progressPercentage, "Getting ratings from local files... (" & done.ToString() & "/" & todo.ToString() & ")")
             track.readLocalRating()
@@ -862,10 +877,52 @@ Public Class frm_Main
 
             Threading.Thread.Sleep(8)
         Next
+
+        done = 0
+        todo = toSyncPlaylist.Tracks.Count
+
+        Dim frm_syncRating As New frm_SyncRating()
+        Dim retVal As frm_SyncRating.syncRatingResult
+
+        ' ask user to confirm sync direction for each track with different ratings
+        For Each track In playlistRatings.Tracks
+            If (bgw_syncRatings.CancellationPending = True) Then
+                e.Cancel = True
+                bgw_syncRatings.ReportProgress(progressPercentage, "Sync canceled by user")
+                Exit Sub
+            End If
+
+            done += 1
+            progressPercentage = 50 + (done * 100 / todo) / 2
+
+            bgw_syncRatings.ReportProgress(progressPercentage, "Syncing ratings... (" & done.ToString() & "/" & todo.ToString() & ")")
+
+            ' show and select current row in DataGridView
+            bgw_syncRatings.ReportProgress(progressPercentage, done - 1)
+
+            ' show dialog to select sync direction
+            frm_syncRating.Track = track
+            retVal = frm_syncRating.ShowDialog(My.Forms.frm_Main)
+            track.SyncResult = retVal
+
+            ' react to sync decision
+            Select Case retVal
+                Case frm_SyncRating.syncRatingResult.useLocalRating
+                    MsgBox("Local")
+                Case frm_SyncRating.syncRatingResult.useRemoteRating
+                    MsgBox("Remote")
+            End Select
+        Next
+
+        dgv_syncRatings_Log.ClearSelection()
     End Sub
 
     Private Sub bgw_syncRatings_ProgressChanged(sender As Object, e As System.ComponentModel.ProgressChangedEventArgs) Handles bgw_syncRatings.ProgressChanged
         Select Case e.UserState.GetType()
+            Case GetType(Integer)
+                dgv_syncRatings_Log.ClearSelection()
+                dgv_syncRatings_Log.FirstDisplayedScrollingRowIndex = e.UserState
+                dgv_syncRatings_Log.Rows(e.UserState).Selected = True
             Case GetType(String)
                 str_Status_Task.Text = e.UserState
             Case GetType(Track)
@@ -874,7 +931,7 @@ Public Class frm_Main
                 dgv_syncRatings_Log.FirstDisplayedScrollingRowIndex = dgv_syncRatings_Log.RowCount - 1
         End Select
 
-        prg_syncRatings_ProgressSync.myText = $"Progress: {e.ProgressPercentage}%"
+        prg_syncRatings_ProgressSync.myText = "Progress: " & e.ProgressPercentage & "%"
         prg_syncRatings_ProgressSync.myValue = e.ProgressPercentage
 
         str_Status_Progress.Text = e.ProgressPercentage & "%"
@@ -882,11 +939,15 @@ Public Class frm_Main
         Application.DoEvents()
     End Sub
 
+    Private Sub bgw_syncRatings_Completed() Handles bgw_syncRatings.RunWorkerCompleted
+        btn_syncRatings_StartSync.Enabled = True
+        'TODO re-enable GUI elements
+    End Sub
+
     Private Sub btn_syncRatings_CancelSync_Click(sender As Object, e As EventArgs) Handles btn_syncRatings_CancelSync.Click
         bgw_syncRatings.CancelAsync()
         btn_syncRatings_CancelSync.Text = "Cancelling..."
     End Sub
-
 #End Region
 #End Region
 End Class

@@ -10,6 +10,9 @@
     Private _ratingRemote As Integer
     Private _ratingRemoteImage As Image
 
+    Private _syncResult As frm_SyncRating.syncRatingResult
+    Private _syncResultImage As Image
+
     Private _coverFile As String
 
     ' fields for the local file
@@ -77,6 +80,32 @@
         Set(value As Image)
             _ratingLocalImage = value
         End Set
+    End Property
+
+    Public Property SyncResult As frm_SyncRating.syncRatingResult
+        Get
+            Return _syncResult
+        End Get
+        Set(value As frm_SyncRating.syncRatingResult)
+            _syncResult = value
+
+            Select Case value
+                Case frm_SyncRating.syncRatingResult.skip
+                    Me._syncResultImage = My.Resources.delete
+                Case frm_SyncRating.syncRatingResult.useLocalRating
+                    Me._syncResultImage = My.Resources.arrow_right
+                Case frm_SyncRating.syncRatingResult.useRemoteRating
+                    Me._syncResultImage = My.Resources.arrow_left
+                Case Else
+                    Me._syncResultImage = My.Resources.toSync
+            End Select
+        End Set
+    End Property
+
+    Public ReadOnly Property SyncResultImage As Image
+        Get
+            Return _syncResultImage
+        End Get
     End Property
 
     Public ReadOnly Property CoverFile As String
@@ -149,6 +178,7 @@
     End Property
 
     Public Sub New()
+        Me.SyncResult = frm_SyncRating.syncRatingResult.toSync
     End Sub
 
     Public Sub New(PathLocal As String)
@@ -164,11 +194,13 @@
             Case My.Computer.FileSystem.FileExists(Me.ParentDirLocal & "\folder.png") = True
                 Me._coverFile = Me.ParentDirLocal & "\folder.png"
         End Select
+        Me.SyncResult = frm_SyncRating.syncRatingResult.toSync
     End Sub
 
     Public Sub New(PathRemote As String, SizeRemote As Integer)
         Me._pathRemote = PathRemote
         Me._sizeRemote = SizeRemote
+        Me.SyncResult = frm_SyncRating.syncRatingResult.toSync
     End Sub
 
     Public Sub generateRemotePath(preset As Preset)

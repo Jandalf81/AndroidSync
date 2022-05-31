@@ -91,7 +91,10 @@ Partial Class frm_Main
         Me.lbl_ModelNameProductSerial = New System.Windows.Forms.Label()
         Me.MyProgressBar1 = New WindowsControlLibrary1.myProgressBar()
         Me.lbl_DiskSpace = New System.Windows.Forms.Label()
-        Me.PoC_btn_uploadFile = New System.Windows.Forms.Button()
+        Me.lbl_syncRatings_basePath_SyncMode = New System.Windows.Forms.Label()
+        Me.rad_SyncMode_Ask = New System.Windows.Forms.RadioButton()
+        Me.rad_SyncMode_Local = New System.Windows.Forms.RadioButton()
+        Me.rad_SyncMode_Remote = New System.Windows.Forms.RadioButton()
         Me.str_Status.SuspendLayout()
         Me.grp_Devices.SuspendLayout()
         CType(Me.dgv_Devices, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -248,7 +251,7 @@ Partial Class frm_Main
         Me.tab_Control.Location = New System.Drawing.Point(12, 271)
         Me.tab_Control.Name = "tab_Control"
         Me.tab_Control.SelectedIndex = 0
-        Me.tab_Control.Size = New System.Drawing.Size(1140, 502)
+        Me.tab_Control.Size = New System.Drawing.Size(1140, 561)
         Me.tab_Control.TabIndex = 3
         '
         'tab_syncFiles_SettingsPlaylists
@@ -263,7 +266,7 @@ Partial Class frm_Main
         Me.tab_syncFiles_SettingsPlaylists.Location = New System.Drawing.Point(4, 22)
         Me.tab_syncFiles_SettingsPlaylists.Name = "tab_syncFiles_SettingsPlaylists"
         Me.tab_syncFiles_SettingsPlaylists.Padding = New System.Windows.Forms.Padding(3)
-        Me.tab_syncFiles_SettingsPlaylists.Size = New System.Drawing.Size(1132, 476)
+        Me.tab_syncFiles_SettingsPlaylists.Size = New System.Drawing.Size(1132, 535)
         Me.tab_syncFiles_SettingsPlaylists.TabIndex = 0
         Me.tab_syncFiles_SettingsPlaylists.Text = "sync Files"
         '
@@ -340,7 +343,7 @@ Partial Class frm_Main
         DataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgv_syncFiles_Log.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
-        Me.dgv_syncFiles_Log.Size = New System.Drawing.Size(1126, 177)
+        Me.dgv_syncFiles_Log.Size = New System.Drawing.Size(1126, 236)
         Me.dgv_syncFiles_Log.TabIndex = 1
         '
         'tableSyncFiles_SettingsPlaylists
@@ -574,7 +577,7 @@ Partial Class frm_Main
         Me.tab_syncRatings.Location = New System.Drawing.Point(4, 22)
         Me.tab_syncRatings.Name = "tab_syncRatings"
         Me.tab_syncRatings.Padding = New System.Windows.Forms.Padding(3)
-        Me.tab_syncRatings.Size = New System.Drawing.Size(1132, 476)
+        Me.tab_syncRatings.Size = New System.Drawing.Size(1132, 535)
         Me.tab_syncRatings.TabIndex = 1
         Me.tab_syncRatings.Text = "sync Ratings"
         '
@@ -583,7 +586,7 @@ Partial Class frm_Main
         Me.prg_syncRatings_ProgressSync.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.prg_syncRatings_ProgressSync.BackColor = System.Drawing.SystemColors.Control
-        Me.prg_syncRatings_ProgressSync.Location = New System.Drawing.Point(9, 168)
+        Me.prg_syncRatings_ProgressSync.Location = New System.Drawing.Point(9, 191)
         Me.prg_syncRatings_ProgressSync.MinimumSize = New System.Drawing.Size(100, 20)
         Me.prg_syncRatings_ProgressSync.Name = "prg_syncRatings_ProgressSync"
         Me.prg_syncRatings_ProgressSync.Size = New System.Drawing.Size(1117, 20)
@@ -614,7 +617,7 @@ Partial Class frm_Main
         DataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.dgv_syncRatings_Log.DefaultCellStyle = DataGridViewCellStyle8
-        Me.dgv_syncRatings_Log.Location = New System.Drawing.Point(9, 194)
+        Me.dgv_syncRatings_Log.Location = New System.Drawing.Point(9, 217)
         Me.dgv_syncRatings_Log.Name = "dgv_syncRatings_Log"
         DataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control
@@ -624,7 +627,7 @@ Partial Class frm_Main
         DataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgv_syncRatings_Log.RowHeadersDefaultCellStyle = DataGridViewCellStyle9
-        Me.dgv_syncRatings_Log.Size = New System.Drawing.Size(1117, 276)
+        Me.dgv_syncRatings_Log.Size = New System.Drawing.Size(1117, 312)
         Me.dgv_syncRatings_Log.TabIndex = 5
         '
         'btn_syncRatings_CancelSync
@@ -632,7 +635,7 @@ Partial Class frm_Main
         Me.btn_syncRatings_CancelSync.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btn_syncRatings_CancelSync.Image = Global.AndroidSync.My.Resources.Resources.cancel
         Me.btn_syncRatings_CancelSync.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btn_syncRatings_CancelSync.Location = New System.Drawing.Point(955, 115)
+        Me.btn_syncRatings_CancelSync.Location = New System.Drawing.Point(955, 138)
         Me.btn_syncRatings_CancelSync.Name = "btn_syncRatings_CancelSync"
         Me.btn_syncRatings_CancelSync.Size = New System.Drawing.Size(171, 47)
         Me.btn_syncRatings_CancelSync.TabIndex = 4
@@ -644,7 +647,7 @@ Partial Class frm_Main
         '
         Me.grp_syncRatings_Filter.Controls.Add(Me.txt_syncRatings_Filter_Path)
         Me.grp_syncRatings_Filter.Controls.Add(Me.lbl_syncRatings_Filter_Path)
-        Me.grp_syncRatings_Filter.Location = New System.Drawing.Point(9, 62)
+        Me.grp_syncRatings_Filter.Location = New System.Drawing.Point(9, 85)
         Me.grp_syncRatings_Filter.Name = "grp_syncRatings_Filter"
         Me.grp_syncRatings_Filter.Size = New System.Drawing.Size(1117, 47)
         Me.grp_syncRatings_Filter.TabIndex = 2
@@ -669,11 +672,15 @@ Partial Class frm_Main
         '
         'grp_syncRatings_Settings
         '
+        Me.grp_syncRatings_Settings.Controls.Add(Me.rad_SyncMode_Remote)
+        Me.grp_syncRatings_Settings.Controls.Add(Me.rad_SyncMode_Local)
+        Me.grp_syncRatings_Settings.Controls.Add(Me.rad_SyncMode_Ask)
+        Me.grp_syncRatings_Settings.Controls.Add(Me.lbl_syncRatings_basePath_SyncMode)
         Me.grp_syncRatings_Settings.Controls.Add(Me.txt_syncRatings_basePath_Remote)
         Me.grp_syncRatings_Settings.Controls.Add(Me.lbl_syncRatings_basePath_Remote)
         Me.grp_syncRatings_Settings.Location = New System.Drawing.Point(9, 9)
         Me.grp_syncRatings_Settings.Name = "grp_syncRatings_Settings"
-        Me.grp_syncRatings_Settings.Size = New System.Drawing.Size(1117, 47)
+        Me.grp_syncRatings_Settings.Size = New System.Drawing.Size(1117, 70)
         Me.grp_syncRatings_Settings.TabIndex = 1
         Me.grp_syncRatings_Settings.TabStop = False
         Me.grp_syncRatings_Settings.Text = "Settings"
@@ -702,7 +709,7 @@ Partial Class frm_Main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btn_syncRatings_StartSync.Image = Global.AndroidSync.My.Resources.Resources.accept
         Me.btn_syncRatings_StartSync.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btn_syncRatings_StartSync.Location = New System.Drawing.Point(9, 115)
+        Me.btn_syncRatings_StartSync.Location = New System.Drawing.Point(9, 138)
         Me.btn_syncRatings_StartSync.Name = "btn_syncRatings_StartSync"
         Me.btn_syncRatings_StartSync.Size = New System.Drawing.Size(940, 47)
         Me.btn_syncRatings_StartSync.TabIndex = 0
@@ -789,22 +796,56 @@ Partial Class frm_Main
         Me.lbl_DiskSpace.TabIndex = 4
         Me.lbl_DiskSpace.Text = "Disk Space:"
         '
-        'PoC_btn_uploadFile
+        'lbl_syncRatings_basePath_SyncMode
         '
-        Me.PoC_btn_uploadFile.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.PoC_btn_uploadFile.Location = New System.Drawing.Point(12, 779)
-        Me.PoC_btn_uploadFile.Name = "PoC_btn_uploadFile"
-        Me.PoC_btn_uploadFile.Size = New System.Drawing.Size(177, 53)
-        Me.PoC_btn_uploadFile.TabIndex = 5
-        Me.PoC_btn_uploadFile.Text = "PoC_uploadFile"
-        Me.PoC_btn_uploadFile.UseVisualStyleBackColor = True
+        Me.lbl_syncRatings_basePath_SyncMode.AutoSize = True
+        Me.lbl_syncRatings_basePath_SyncMode.Location = New System.Drawing.Point(6, 47)
+        Me.lbl_syncRatings_basePath_SyncMode.Name = "lbl_syncRatings_basePath_SyncMode"
+        Me.lbl_syncRatings_basePath_SyncMode.Size = New System.Drawing.Size(61, 13)
+        Me.lbl_syncRatings_basePath_SyncMode.TabIndex = 5
+        Me.lbl_syncRatings_basePath_SyncMode.Text = "Sync Mode"
+        '
+        'rad_SyncMode_Ask
+        '
+        Me.rad_SyncMode_Ask.Image = Global.AndroidSync.My.Resources.Resources.arrow_refresh
+        Me.rad_SyncMode_Ask.Location = New System.Drawing.Point(110, 42)
+        Me.rad_SyncMode_Ask.Name = "rad_SyncMode_Ask"
+        Me.rad_SyncMode_Ask.Size = New System.Drawing.Size(158, 22)
+        Me.rad_SyncMode_Ask.TabIndex = 6
+        Me.rad_SyncMode_Ask.TabStop = True
+        Me.rad_SyncMode_Ask.Text = "Ask me for each track"
+        Me.rad_SyncMode_Ask.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.rad_SyncMode_Ask.UseVisualStyleBackColor = True
+        '
+        'rad_SyncMode_Local
+        '
+        Me.rad_SyncMode_Local.Image = Global.AndroidSync.My.Resources.Resources.arrow_right
+        Me.rad_SyncMode_Local.Location = New System.Drawing.Point(274, 42)
+        Me.rad_SyncMode_Local.Name = "rad_SyncMode_Local"
+        Me.rad_SyncMode_Local.Size = New System.Drawing.Size(158, 22)
+        Me.rad_SyncMode_Local.TabIndex = 7
+        Me.rad_SyncMode_Local.TabStop = True
+        Me.rad_SyncMode_Local.Text = "Always use local rating"
+        Me.rad_SyncMode_Local.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.rad_SyncMode_Local.UseVisualStyleBackColor = True
+        '
+        'rad_SyncMode_Remote
+        '
+        Me.rad_SyncMode_Remote.Image = Global.AndroidSync.My.Resources.Resources.arrow_left
+        Me.rad_SyncMode_Remote.Location = New System.Drawing.Point(438, 42)
+        Me.rad_SyncMode_Remote.Name = "rad_SyncMode_Remote"
+        Me.rad_SyncMode_Remote.Size = New System.Drawing.Size(158, 22)
+        Me.rad_SyncMode_Remote.TabIndex = 8
+        Me.rad_SyncMode_Remote.TabStop = True
+        Me.rad_SyncMode_Remote.Text = "Always use remote rating"
+        Me.rad_SyncMode_Remote.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.rad_SyncMode_Remote.UseVisualStyleBackColor = True
         '
         'frm_Main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1162, 859)
-        Me.Controls.Add(Me.PoC_btn_uploadFile)
         Me.Controls.Add(Me.grp_selectedDevice)
         Me.Controls.Add(Me.tab_Control)
         Me.Controls.Add(Me.grp_Devices)
@@ -872,7 +913,6 @@ Partial Class frm_Main
     Friend WithEvents ToolStripStatusLabel3 As ToolStripStatusLabel
     Friend WithEvents str_Status_Task As ToolStripStatusLabel
     Friend WithEvents dgv_syncFiles_Log As DataGridView
-    Friend WithEvents PoC_btn_uploadFile As Button
     Friend WithEvents str_Status_Progress As ToolStripStatusLabel
     Friend WithEvents ToolStripStatusLabel4 As ToolStripStatusLabel
     Friend WithEvents btn_syncFiles_CancelSync As Button
@@ -891,4 +931,8 @@ Partial Class frm_Main
     Friend WithEvents grp_syncRatings_Filter As GroupBox
     Friend WithEvents txt_syncRatings_Filter_Path As TextBox
     Friend WithEvents lbl_syncRatings_Filter_Path As Label
+    Friend WithEvents rad_SyncMode_Remote As RadioButton
+    Friend WithEvents rad_SyncMode_Local As RadioButton
+    Friend WithEvents rad_SyncMode_Ask As RadioButton
+    Friend WithEvents lbl_syncRatings_basePath_SyncMode As Label
 End Class

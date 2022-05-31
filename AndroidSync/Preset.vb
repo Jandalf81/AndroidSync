@@ -63,6 +63,8 @@
     Public Sub New()
     End Sub
 
+    ' TODO add rating sync mode
+
     Public Sub Save(toFile As String)
         Dim x As New Xml.Serialization.XmlSerializer(Me.GetType)
         Dim fileWriter As IO.StreamWriter
